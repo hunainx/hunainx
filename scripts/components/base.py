@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-from svgkit import SANS_STACK, GlyphAtlas, esc, esc_text, num
+from svgkit import MONO_STACK, SANS_STACK, GlyphAtlas, esc, esc_text, num
 
 RM = "@media (prefers-reduced-motion: reduce){*{animation:none!important}}"
 
@@ -41,6 +41,9 @@ ICONS = {
     "search": '<circle cx="7" cy="7" r="4.6"/><path d="m10.4 10.4 3.8 3.8"/>',
     "clock": '<circle cx="8" cy="8" r="6.2"/><path d="M8 4.6V8l2.6 1.6"/>',
     "console": '<rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M4.5 6.5 6.5 8l-2 1.5M8 10h3.5"/>',
+    "check": '<rect x="1.5" y="1.5" width="13" height="13" rx="3"/><path d="m4.8 8.2 2.2 2.2 4.4-4.6"/>',
+    "challenge": '<circle cx="8" cy="8" r="6.5"/><path d="M6 6.2a2 2 0 1 1 2.9 1.8c-.6.3-.9.8-.9 1.4v.4"/><path d="M8 11.8v.1"/>',
+    "architect": '<rect x="5.5" y="1.5" width="5" height="4" rx="1"/><rect x="1.5" y="10.5" width="5" height="4" rx="1"/><rect x="9.5" y="10.5" width="5" height="4" rx="1"/><path d="M8 5.5v2.5M4 10.5V8h8v2.5"/>',
     "index": '<path d="M2 3.5h12M2 8h12M2 12.5h12"/><path d="M5 2v3M9 6.5v3M6.5 11v3"/>',
 }
 
@@ -82,6 +85,13 @@ class Doc:
         a = "" if anchor == "start" else f' text-anchor="{anchor}"'
         return f'<text class="{cls}" x="{num(x)}" y="{num(y)}"{a} font-size="{num(size)}">{esc_text(s)}</text>'
 
+    def mono_text(self, size: float, s: str, x: float, y: float, cls: str, anchor: str = "start", tr: float = 0.0) -> str:
+        """Small mono labels as real <text> in the system mono stack. Widths are measured with
+        JetBrains Mono (0.6em), which is as wide or wider than SF Mono, Menlo and Consolas."""
+        a = "" if anchor == "start" else f' text-anchor="{anchor}"'
+        ls = f' letter-spacing="{num(tr)}"' if tr else ""
+        return f'<text class="{cls} mo" x="{num(x)}" y="{num(y)}"{a}{ls} font-size="{num(size)}">{esc_text(s)}</text>'
+
     def width(self, kind: str, size: float, s: str, tr: float = 0.0) -> float:
         return self.at.width(kind, size, s, tr)
 
@@ -106,6 +116,8 @@ class Doc:
     def render(self, h: float, title: str, desc: str) -> str:
         kfs = "".join(f"@keyframes {n}{{{f}}}" for n, f in self._kf.items())
         font_rule = f"text{{font-family:{SANS_STACK}}}" if any("<text " in part for part in self.body) else ""
+        if any(re.search(r'class="(?:[^"]* )?mo[ "]', part) for part in self.body):
+            font_rule += f".mo{{font-family:{MONO_STACK}}}"
         return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{self.w}" height="{num(h)}" '
                 f'viewBox="0 0 {self.w} {num(h)}" role="img" aria-labelledby="t d">\n'
                 f'<title id="t">{esc(title)}</title>\n<desc id="d">{esc(desc)}</desc>\n'

@@ -18,12 +18,12 @@ from pathlib import Path
 
 import yaml
 
-from components import activity, building, hero, label, misc, stack, work
+from components import activity, cards, hero, label, method, misc, stack, work
 from svgkit import ROOT, esc, esc_text
 
 TPL = ROOT / "templates" / "README.md.tpl"
-REGIONS = ("hero", "about", "links", "building", "work", "stack", "activity", "principles", "footer")
-ASSET_DIRS = ("hero", "labels", "building", "work", "stack", "activity", "dividers", "footer", "chips")
+REGIONS = ("hero", "about", "links", "building", "clients", "work", "stack", "activity", "principles", "footer")
+ASSET_DIRS = ("hero", "labels", "building", "clients", "work", "stack", "activity", "method", "dividers", "footer", "chips")
 LEGACY_DIRS = ("panels", "projects", "stats")  # v1 layout; cleaned when found
 
 
@@ -113,7 +113,8 @@ def build(b: Build) -> dict[str, str]:
     regions["hero"] = f'<p>\n{pic}\n</p>'
 
     if nonempty(p.get("about")):
-        regions["about"] = esc_text(p["about"].strip())
+        paras = [" ".join(x.split()) for x in p["about"].strip().split("\n") if x.strip()]
+        regions["about"] = "\n\n".join(esc_text(x) for x in paras)
 
     links = {k: v.strip() for k, v in (p.get("links") or {}).items() if nonempty(v) and k in misc.LINK_LABELS}
     if links:
@@ -124,13 +125,11 @@ def build(b: Build) -> dict[str, str]:
             chips.append(f'<a href="{esc(href)}">{b.picture(cp, misc.LINK_LABELS[key])}</a>')
         regions["links"] = "<p>\n" + "\n".join(chips) + "\n</p>"
 
-    # currently building
-    cards = building.cards_data(p, b.projects)
-    if cards:
-        bp = b.asset("building", "building", "building", lambda t, tier, width: building.render(t, cards, tier, width))
-        alt_b = " ".join(f"{c['id']}: {c['summary']}" + (f" ({', '.join(c['stack'])})" if c["stack"] else "")
-                         + (" Private." if c["private"] else "") for c in cards)
-        regions["building"] = b.section("building", f"<p>\n{b.picture(bp, alt_b)}\n</p>")
+    # currently building + client work: one SVG per card (each can link), rows of two
+    for key, folder, items in (("building", "building", cards.building_cards(p, b.projects)),
+                               ("clients", "clients", cards.client_cards(b.projects))):
+        if items:
+            regions[key] = b.section(key, card_grid(b, folder, items))
 
     # selected work (only real public repos)
     repos = {r["name"]: r for r in gh.get("repos", [])}
@@ -167,12 +166,20 @@ def build(b: Build) -> dict[str, str]:
         alt_a = f"{total} {cfg['labels']['activity_caption']}"
     else:
         ap = b.asset("activity", "activity", "activity", lambda t, tier, width: activity.low_data(t, gh, cfg["labels"], tier, width))
-        alt_a = f"{cfg['labels']['activity_low']}. {total} {cfg['labels']['activity_caption']}."
+        alt_a = f"{cfg['labels']['activity_low']}."
     regions["activity"] = b.section("activity", f"<p>\n{b.picture(ap, alt_a)}\n</p>")
 
-    principles = [s.strip() for s in p.get("principles") or [] if nonempty(s)]
-    if principles:
-        regions["principles"] = b.section("principles", "\n".join(f"{i}. {esc_text(s)}" for i, s in enumerate(principles, 1)))
+    steps = [m for m in p.get("method") or [] if nonempty(m.get("stage"))]
+    principles = [s_.strip() for s_ in p.get("principles") or [] if nonempty(s_)]
+    if steps or principles:
+        inner = []
+        if steps:
+            mp = b.asset("method", "method", "method", lambda t, tier, width: method.render(t, steps, tier, width))
+            inner.append(f"<p>\n{b.picture(mp, 'Method: ' + ', '.join(m['stage'].strip() for m in steps))}\n</p>")
+            inner.append("\n".join(f"{i}. **{esc_text(m['stage'].strip())}** — {esc_text(m['line'].strip())}"
+                                    for i, m in enumerate(steps, 1)))
+        inner += [esc_text(x) for x in principles]
+        regions["principles"] = b.section("principles", "\n\n".join(inner))
 
     # footer (always)
     sep = b.asset("separator", "dividers", "rule", lambda t, tier, width: misc.separator(t, tier, width))
@@ -182,6 +189,31 @@ def build(b: Build) -> dict[str, str]:
     regions["footer"] = (f'<p>\n{b.picture(sep, "Divider")}\n</p>\n\n<p>\n{b.picture(fp, cfg["labels"]["footer"] + " · " + gh["last_changed"])}\n'
                          f'<br>\n<sub><a href="{wf}">refresh workflow</a></sub>\n</p>')
     return regions
+
+
+def slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def card_grid(b: Build, folder: str, items: list[dict]) -> str:
+    """Every card at every tier; cards in a row of two share the row's tallest height."""
+    heights = {}
+    for tier in ("desktop", "mid", "mobile"):
+        per_row = 1 if tier == "mobile" else 2
+        for r in range(0, len(items), per_row):
+            row = items[r:r + per_row]
+            h = max(cards.measure(c, tier)["height"] for c in row)
+            for j in range(len(row)):
+                heights[(tier, r + j)] = h
+    out = []
+    for i, c in enumerate(items):
+        stem = c["title"] if c["kind"] == "building" else slug(c["title"])
+        cp = b.asset("cards", folder, stem, lambda t, tier, width, c=c, i=i:
+                     cards.render(t, c, tier, cards.TIER[tier][0], heights[(tier, i)], i),
+                     tiers=("desktop", "mid", "mobile"))
+        pic = b.picture(cp, cards.alt(c))
+        out.append(f'<a href="{esc(c["link"])}">{pic}</a>' if c["link"] else pic)
+    return "<p>\n" + "\n".join(out) + "\n</p>"
 
 
 def write_readme(b: Build, regions: dict[str, str]) -> None:

@@ -21,10 +21,10 @@ tiers:
   mobile:  { width: 360 }
 # Components that get the 600px mid tier (others use desktop art from 1012px). All full-width
 # components share it so their edges line up at every width; work cards (410px) never scale.
-mid_tier: [hero, label, building, stack, activity, separator]
+mid_tier: [hero, building, stack, activity, method, separator]
 
 hero:
-  agents_category: "AI engineering"     # profile.yml stack category listed beside the agent orbit
+  agents_category: "AI & agents"        # profile.yml stack category listed beside the agent orbit
   corners:                              # true values only
     top_left: "MYSURU, IN"
     top_right: "UTC+5:30"
@@ -34,10 +34,11 @@ hero:
 # Terminal label + native heading for each section.
 sections:
   building:   { command: "./building --now", heading: "Currently building" }
+  clients:    { command: "ls ./clients",     heading: "Client work" }
   work:       { command: "ls ./work",        heading: "Selected work" }
   stack:      { command: "tree ./stack",     heading: "Stack" }
   activity:   { command: "./activity",       heading: "Activity" }
-  principles: { command: "cat ./principles", heading: "How I work" }
+  principles: { command: "cat ./method",     heading: "How I work" }
 
 # Colour tokens (PRD §7). `faint` is decorative only: it fails 4.5:1 as text.
 tokens:
@@ -49,6 +50,7 @@ tokens:
     text: "#E6EDF3"
     muted: "#8B96A5"
     faint: "#4A5361"
+    success: "#3FB950"   # "Live" status light (not used for text)
   light:
     bg: "#FFFFFF"
     surface: "#F6F8FA"
@@ -57,6 +59,7 @@ tokens:
     text: "#1F2328"
     muted: "#59636E"
     faint: "#8C959F"
+    success: "#1A7F37"
 
 # primary/secondary are used for fills and strokes; *_text for any glyphs drawn in the accent.
 # Light ember primary #B5611C is 4.48:1 on white, so its text variant is darkened to pass 4.5:1.

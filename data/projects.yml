@@ -1,13 +1,13 @@
 # One block per "Currently building" card, in the same order as profile.yml `now`.
 # Empty fields are hidden, never guessed.
-# glyph: architecture drawing on the card (documents | availability | audit); a design choice, not a claim.
+# glyph: architecture drawing on the card (documents | availability | audit | pipeline); a design choice, not a claim.
 
 building:
   - id: "01"
     codename: ""
     summary: ""          # empty = profile.yml now[0]
-    stack: ["Supabase", "Postgres", "Google Cloud Storage", "Claude Code"]
-    status: ""           # hidden until confirmed
+    stack: ["Google Cloud Run", "Google Cloud Storage", "Supabase", "Postgres", "pgvector", "MCP", "Claude"]
+    status: "In active use"
     private: true
     glyph: "documents"
   - id: "02"
@@ -24,3 +24,24 @@ building:
     status: ""
     private: true
     glyph: "audit"
+  - id: "04"
+    codename: ""
+    summary: ""          # empty = profile.yml now[3]
+    stack: ["Python", "SVG", "GitHub Actions"]
+    status: "Live"
+    private: false
+    link: "https://github.com/hunainx/hunainx"
+    glyph: "pipeline"    # new glyph: spec -> build -> check -> ship
+
+# Client work with a public name. The code stays private: no repo links.
+client_work:
+  - name: "Rumer Groups"
+    summary: "Corporate website for a Mysuru holding company, specified in a 25,000-word PRD, built with AI agents and adversarially audited (P0 to P3) before launch."
+    stack: ["GSAP + ScrollTrigger", "WebGL2", "Netlify"]
+    link: "https://rumergroups.com"
+    private: true
+  - name: "Airo Rentals"
+    summary: "Self-drive rental website with scroll-driven motion. Next phase: a Supabase booking system with live availability, calendar and admin."
+    stack: ["GSAP", "Supabase"]
+    link: ""             # no live site yet
+    private: true

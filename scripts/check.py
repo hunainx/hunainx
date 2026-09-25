@@ -125,7 +125,7 @@ def check_readme(base: Path, r: Report) -> str:
     path = base / "README.md"
     r.ok(path.exists() and path.stat().st_size > 0, "README.md missing or empty")
     if not path.exists():
-        return ""
+        return "", ""
     md = path.read_text(encoding="utf-8")
     for bad in PLACEHOLDERS + ("shields.io",):
         r.ok(bad.lower() not in md.lower(), f"README contains {bad!r}")
@@ -146,14 +146,18 @@ def check_readme(base: Path, r: Report) -> str:
     visible = re.sub(r"<!--.*?-->", " ", md, flags=re.S)
     visible = re.sub(r"(?m)^\d+\. ", "", visible)  # ordered-list markers are structure, not numbers
     alts = " ".join(re.findall(r'alt="([^"]*)"', visible))
-    return html.unescape(re.sub(r"<[^>]+>", " ", visible) + " " + alts)
+    return md, html.unescape(re.sub(r"<[^>]+>", " ", visible) + " " + alts)
 
 
-def check_copy(profile: dict, projects: dict, info: dict, readme: str, r: Report) -> None:
+def check_copy(base: Path, cfg: dict, profile: dict, projects: dict, info: dict, readme_md: str, readme: str, r: Report) -> None:
     """Profile copy must appear verbatim; empty fields must not appear at all."""
     def desc_of(prefix: str) -> str:
         return " ".join(v["desc"] + " " + v["text"] for k, v in info.items() if k.startswith(prefix))
 
+    def flat(text: str) -> str:
+        return " ".join(text.split())
+
+    # hero: name, role, tagline, ticker (first sentence of each principle), pipeline, agents
     hero_desc = desc_of("assets/hero/")
     for key in ("name", "role", "tagline"):
         if (profile.get(key) or "").strip():
@@ -161,23 +165,68 @@ def check_copy(profile: dict, projects: dict, info: dict, readme: str, r: Report
     for p in profile.get("principles") or []:
         first = re.split(r"(?<=[.!?])\s", p.strip(), maxsplit=1)[0]
         r.ok(first in hero_desc, f"hero ticker is missing principle lead {first!r}")
-        r.ok(p.strip() in readme, f"README is missing principle {p.strip()[:40]!r}…")
-    if (profile.get("about") or "").strip():
-        r.ok(" ".join(profile["about"].split()) in " ".join(readme.split()), "README is missing the about text verbatim")
-    b_desc = desc_of("assets/building/")
+        r.ok(p.strip() in readme, f"README is missing principle {p.strip()[:40]!r}")
+    for stage in ("challenge", "spec", "architect", "agents", "audit", "ship"):
+        r.ok(stage in hero_desc, f"hero pipeline is missing stage {stage!r}")
+    for a in (profile.get("stack") or {}).get(cfg["hero"]["agents_category"], []):
+        r.ok(a in hero_desc, f"hero agents cluster is missing {a!r}")
+
+    # about: every paragraph, verbatim, as its own Markdown paragraph
+    for para in [flat(x) for x in (profile.get("about") or "").strip().split("\n") if x.strip()]:
+        r.ok(f"\n{para}\n" in f"\n{readme_md}\n", f"README is missing the about paragraph {para[:40]!r} as its own paragraph")
+
+    # currently building: one card per `now` item, fields shown only when set
     entries = (projects or {}).get("building") or []
-    for i, now in enumerate(profile.get("now") or []):
+    now = [n for n in profile.get("now") or [] if n.strip()]
+    cards = sorted(k for k in info if k.startswith("assets/building/") and re.search(r"/[^/-]+-dark\.svg$", k))
+    r.ok(len(cards) == len(now), f"{len(cards)} building cards for {len(now)} `now` items")
+    for i, text in enumerate(now):
         e = entries[i] if i < len(entries) else {}
-        summary = (e.get("summary") or "").strip() or now.strip()
-        r.ok(summary in b_desc, f"building card {i + 1} is missing its summary verbatim")
+        cid = str(e.get("id") or f"{i + 1:02d}")
+        d = desc_of(f"assets/building/{cid}-")
+        summary = (e.get("summary") or "").strip() or text.strip()
+        r.ok(summary in d, f"building card {cid} is missing its summary verbatim")
         for tool in e.get("stack") or []:
-            r.ok(tool in b_desc, f"building card {i + 1} is missing stack tool {tool!r}")
-    if not any((e.get("status") or "").strip() for e in entries):
-        r.ok("Status:" not in b_desc, "a building card shows a status although none is set in projects.yml")
-    if not any((e.get("codename") or "").strip() for e in entries):
-        r.ok("Codename" not in b_desc, "a building card shows a codename although none is set in projects.yml")
+            r.ok(tool in d, f"building card {cid} is missing stack tool {tool!r}")
+        status = (e.get("status") or "").strip()
+        r.ok((f"Status: {status}." in d) if status else ("Status:" not in d), f"building card {cid}: status shown does not match projects.yml")
+        r.ok(("Private." in d) == bool(e.get("private")), f"building card {cid}: PRIVATE tag does not match projects.yml")
+        link = (e.get("link") or "").strip()
+        wrapped = f'<a href="{link}"><picture>' in readme_md and f"assets/building/{cid}-light.svg" in readme_md
+        r.ok(wrapped if link else "Link:" not in d, f"building card {cid}: link does not match projects.yml")
+        if not (e.get("codename") or "").strip():
+            r.ok("Codename" not in d, f"building card {cid} shows a codename that is not set")
+
+    # client work: one card per entry; live-site link only where `link` is set
+    clients = [c for c in (projects or {}).get("client_work") or [] if (c.get("name") or "").strip()]
+    ccards = [k for k in info if k.startswith("assets/clients/") and re.search(r"/[a-z0-9-]+(?<!-mid)(?<!-mobile)-dark\.svg$", k)]
+    r.ok(len(ccards) == len(clients), f"{len(ccards)} client cards for {len(clients)} client_work entries")
+    for c in clients:
+        slug = re.sub(r"[^a-z0-9]+", "-", c["name"].lower()).strip("-")
+        d = desc_of(f"assets/clients/{slug}-")
+        for field in ("name", "summary"):
+            r.ok(c[field].strip() in d, f"client card {c['name']!r} is missing its {field} verbatim")
+        for tool in c.get("stack") or []:
+            r.ok(tool in d, f"client card {c['name']!r} is missing stack tool {tool!r}")
+        r.ok(("Private code." in d) == bool(c.get("private")), f"client card {c['name']!r}: PRIVATE CODE tag does not match projects.yml")
+        link = (c.get("link") or "").strip()
+        linked = bool(re.search(rf'<a href="[^"]+"><picture>\s*<source[^>]*assets/clients/{slug}-', readme_md))
+        r.ok(linked == bool(link), f"client card {c['name']!r}: live-site link does not match projects.yml")
+        if link:
+            r.ok(f'<a href="{link}">' in readme_md, f"client card {c['name']!r} links somewhere other than its `link`")
+
+    # method: every stage in the diagram, and "stage — line" verbatim in the Markdown list
+    m_desc = desc_of("assets/method/")
+    for m in profile.get("method") or []:
+        stage, line = m["stage"].strip(), m["line"].strip()
+        r.ok(stage in m_desc, f"method diagram is missing stage {stage!r}")
+        r.ok(f"**{html.escape(stage, quote=False)}** — {html.escape(line, quote=False)}" in readme_md,
+             f"README method list is missing {stage!r} with its line verbatim")
+
+    # stack map
     s_desc = desc_of("assets/stack/")
     for cat, tools in (profile.get("stack") or {}).items():
+        r.ok(cat in s_desc, f"stack map is missing category {cat!r}")
         for tool in tools or []:
             r.ok(tool in s_desc, f"stack map is missing {tool!r}")
     for f in profile.get("focus") or []:
@@ -228,8 +277,8 @@ def main() -> None:
     projects = load(base, "projects.yml") or {}
     r = Report()
     info = check_svgs(base, cfg, r)
-    readme = check_readme(base, r)
-    check_copy(profile, projects, info, readme, r)
+    readme_md, readme = check_readme(base, r)
+    check_copy(base, cfg, profile, projects, info, readme_md, readme, r)
     check_contrast(cfg, r)
     rendered = " ".join(v["desc"] + " " + v["text"] + " " + v["title"] for v in info.values()) + " " + readme
     check_numbers(base, cfg, profile, projects, rendered, r)

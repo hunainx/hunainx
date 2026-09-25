@@ -1,7 +1,7 @@
 """Section label: a terminal command strip that sits above each native `##` heading."""
 from __future__ import annotations
 
-from svgkit import num
+from svgkit import esc_text, num
 
 from .base import Doc, hgrad
 
@@ -33,15 +33,14 @@ def render(t: dict, command: str, tier: str, width: int, host: str = "~/hunainx"
     d.keyframes("dblink", "0%{opacity:1}6%{opacity:.25}12%{opacity:1}55%{opacity:1}60%{opacity:.25}64%,100%{opacity:1}")
 
     x = pad + 18
-    d.add(f'<g class="host">{d.text("mono", fs, host, x, base_y)}</g>')
-    x += d.width("mono", fs, host) + fs * .6
-    d.add(f'<g class="dol">{d.text("mono", fs, "$", x, base_y)}</g>')
-    x += fs * 1.2
-    d.add(f'<g class="cmd">{d.text("mono", fs, command, x, base_y)}</g>')
-    x += d.width("mono", fs, command) + 4
-    d.add(f'<rect class="cur" x="{num(x)}" y="{num(cy - fs * .55)}" width="{num(fs * .6 - 1)}" height="{num(fs * 1.05)}"/>')
-    d.animate("cur", "animation:blink 1.1s steps(1,end) infinite", "blink")
-    x += fs * .6 + 14
+    # one text run in the system mono stack; the cursor is a character, so it follows the text in any font
+    d.add(f'<text class="mo" x="{x}" y="{num(base_y)}" font-size="{fs}" xml:space="preserve">'
+          f'<tspan class="host">{esc_text(host)}</tspan> <tspan class="dol">$</tspan> '
+          f'<tspan class="cmd">{esc_text(command)}</tspan><tspan class="cur">\u2588</tspan></text>')
+    d.animate("cur", "animation:fblink 1.1s steps(1,end) infinite")
+    d.keyframes("fblink", "50%{fill-opacity:0}")
+    # JetBrains Mono (0.6em) is as wide or wider than the system mono fonts, so the rule never overlaps
+    x += d.width("mono", fs, f"{host} $ {command}") + fs * .6 + 14
 
     end = W - pad - 6
     if x < end - 30:

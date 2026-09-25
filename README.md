@@ -7,13 +7,19 @@
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/hero/hero-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/hero/hero-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/hero/hero-mobile-light.svg">
-  <img src="assets/hero/hero-light.svg" alt="Hunain Ahmed — AI · Software · Product builder — Precise specs. Rigorous audits. Software that holds up in production.">
+  <img src="assets/hero/hero-light.svg" alt="Hunain Ahmed — AI-native systems builder — From ambiguous problem to verified system.">
 </picture>
 </p>
 <!-- END:hero -->
 
 <!-- START:about -->
-I design and build software end to end: web and mobile apps, games, SaaS platforms and bespoke systems for businesses. My practice is AI-native. Every product begins as a precise written specification, is built with AI coding agents under close direction, and passes an adversarial audit before it ships. The result is software delivered quickly and built to last. I'm based in Mysuru, India, and also work across brand and digital growth.
+I turn ambiguous problems into structured, working systems.
+
+Most of my work happens before the first line of code: breaking the problem down, researching the domain, and stress-testing whether the idea should be built at all. What survives becomes a precise specification and an architecture. AI coding agents carry the implementation under close direction, and everything they produce is audited adversarially before it ships.
+
+Right now that means evidence-intelligence infrastructure: pipelines that turn large, unstructured archives of documents, email, attachments and voice recordings into searchable evidence through OCR, transcription and vector retrieval, exposed to AI through MCP servers on Google Cloud. Alongside it are production web products, product concepts taken through adversarial validation, and the brand and creative systems around them.
+
+The domains change. The method doesn't.
 <!-- END:about -->
 
 <!-- START:links -->
@@ -34,16 +40,78 @@ I design and build software end to end: web and mobile apps, games, SaaS platfor
 
 <p>
 <picture>
-  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/building/building-dark.svg">
-  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/building/building-light.svg">
-  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/building/building-mid-dark.svg">
-  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/building/building-mid-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/building/building-mobile-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/building/building-mobile-light.svg">
-  <img src="assets/building/building-light.svg" alt="01: Building a legal investigation platform: document ingestion, high-performance search and evidence analysis (Supabase, Postgres, Google Cloud Storage, Claude Code) Private. 02: Engineering a booking platform: live availability, scheduling and an admin console (Supabase, Postgres) Private. 03: Conducting adversarial audits of AI-built codebases before launch (Claude Code, Google Antigravity) Private.">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/building/01-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/building/01-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/building/01-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/building/01-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/building/01-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/building/01-mobile-light.svg">
+  <img src="assets/building/01-light.svg" alt="01: Evidence intelligence platform: ingestion, OCR, transcription and vector retrieval for litigation-scale document archives, served to Claude through per-case MCP servers on Cloud Run Status: In active use. Private. Stack: Google Cloud Run, Google Cloud Storage, Supabase, Postgres, pgvector, MCP, Claude.">
 </picture>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/building/02-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/building/02-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/building/02-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/building/02-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/building/02-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/building/02-mobile-light.svg">
+  <img src="assets/building/02-light.svg" alt="02: Airo Rentals booking platform: live availability, scheduling and an admin console on Supabase Private. Stack: Supabase, Postgres.">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/building/03-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/building/03-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/building/03-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/building/03-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/building/03-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/building/03-mobile-light.svg">
+  <img src="assets/building/03-light.svg" alt="03: Adversarial audit practice: report-only reviews of AI-built codebases, every finding ranked P0 to P3 Private. Stack: Claude Code, Google Antigravity.">
+</picture>
+<a href="https://github.com/hunainx/hunainx"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/building/04-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/building/04-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/building/04-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/building/04-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/building/04-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/building/04-mobile-light.svg">
+  <img src="assets/building/04-light.svg" alt="04: This profile: a spec-first, truth-gated, self-updating build. The method, in public. Status: Live. Stack: Python, SVG, GitHub Actions. Link: github.com/hunainx/hunainx.">
+</picture></a>
 </p>
 <!-- END:building -->
+
+<!-- START:clients -->
+<p>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/labels/clients-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/labels/clients-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/labels/clients-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/labels/clients-mobile-light.svg">
+  <img src="assets/labels/clients-light.svg" alt="$ ls ./clients">
+</picture>
+</p>
+
+## Client work
+
+<p>
+<a href="https://rumergroups.com"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/clients/rumer-groups-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/clients/rumer-groups-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/clients/rumer-groups-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/clients/rumer-groups-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/clients/rumer-groups-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/clients/rumer-groups-mobile-light.svg">
+  <img src="assets/clients/rumer-groups-light.svg" alt="Rumer Groups: Corporate website for a Mysuru holding company, specified in a 25,000-word PRD, built with AI agents and adversarially audited (P0 to P3) before launch. Private code. Stack: GSAP + ScrollTrigger, WebGL2, Netlify. Link: rumergroups.com.">
+</picture></a>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/clients/airo-rentals-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/clients/airo-rentals-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/clients/airo-rentals-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/clients/airo-rentals-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/clients/airo-rentals-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/clients/airo-rentals-mobile-light.svg">
+  <img src="assets/clients/airo-rentals-light.svg" alt="Airo Rentals: Self-drive rental website with scroll-driven motion. Next phase: a Supabase booking system with live availability, calendar and admin. Private code. Stack: GSAP, Supabase.">
+</picture>
+</p>
+<!-- END:clients -->
 
 <!-- START:work -->
 <!-- END:work -->
@@ -69,7 +137,7 @@ I design and build software end to end: web and mobile apps, games, SaaS platfor
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/stack/stack-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/stack/stack-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/stack/stack-mobile-light.svg">
-  <img src="assets/stack/stack-light.svg" alt="AI engineering: Claude Code, Google Antigravity; Data: Supabase, Postgres, Google Cloud Storage; Interactive web: GSAP + ScrollTrigger, WebGL2; Delivery: GitHub, Netlify. Focus: Product engineering, SaaS platforms, Games, Bespoke software.">
+  <img src="assets/stack/stack-light.svg" alt="AI &amp; agents: Claude, Claude Code, Claude Desktop, MCP, Google Antigravity, Gemini; Cloud: Google Cloud Run, Google Cloud Storage; Data &amp; retrieval: Supabase, Postgres, pgvector; Interactive web: GSAP + ScrollTrigger, WebGL2; Delivery: GitHub Actions, Netlify. Focus: Evidence &amp; document intelligence, AI-agent systems, Product architecture, Web products.">
 </picture>
 </p>
 <!-- END:stack -->
@@ -95,7 +163,7 @@ I design and build software end to end: web and mobile apps, games, SaaS platfor
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/activity/activity-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/activity/activity-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/activity/activity-mobile-light.svg">
-  <img src="assets/activity/activity-light.svg" alt="building in private. 3 public contributions in the last 12 months.">
+  <img src="assets/activity/activity-light.svg" alt="building in private.">
 </picture>
 </p>
 <!-- END:activity -->
@@ -107,15 +175,34 @@ I design and build software end to end: web and mobile apps, games, SaaS platfor
   <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/labels/principles-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/labels/principles-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/labels/principles-mobile-light.svg">
-  <img src="assets/labels/principles-light.svg" alt="$ cat ./principles">
+  <img src="assets/labels/principles-light.svg" alt="$ cat ./method">
 </picture>
 </p>
 
 ## How I work
 
-1. Specification before code. A precise spec is the fastest route to a correct product.
-2. Audit like an adversary. Every finding is ranked by severity, and fixes follow priority, not convenience.
-3. Evidence over assertion. If a claim cannot be verified, it does not ship.
+<p>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/method/method-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/method/method-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/method/method-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/method/method-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/method/method-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/method/method-mobile-light.svg">
+  <img src="assets/method/method-light.svg" alt="Method: Frame, Research, Challenge, Specify, Architect, Orchestrate, Audit, Ship &amp; iterate">
+</picture>
+</p>
+
+1. **Frame** — Break the problem down until the real one is visible.
+2. **Research** — Learn the domain before designing for it.
+3. **Challenge** — Should this exist? Where does the idea fail? What is the smallest version that proves it?
+4. **Specify** — Write the product down precisely enough that an agent can't misread it.
+5. **Architect** — Data model, infrastructure and boundaries decided before code.
+6. **Orchestrate** — AI agents as the build team: scoped, parallel, supervised.
+7. **Audit** — Read the output as an adversary. Severity-ranked, checked against the spec, never taken on trust.
+8. **Ship &amp; iterate** — Deploy, observe, and feed what breaks back into the spec.
+
+Evidence over assertion. If a claim cannot be verified, it does not ship.
 <!-- END:principles -->
 
 <!-- START:footer -->

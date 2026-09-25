@@ -20,7 +20,7 @@ def render(t: dict, stack: dict, focus: list[str], tier: str, width: int) -> tup
     links, parts = [], []
 
     if not mobile:
-        colw, out_w, gap = (350, 230, 12) if tier == "desktop" else (250, 180, 10)
+        colw, out_w, gap = (340, 250, 12) if tier == "desktop" else (230, 200, 10)
         lx, rx = 16, W - 16 - out_w
         y0 = 40
         heights = []
@@ -31,10 +31,10 @@ def render(t: dict, stack: dict, focus: list[str], tier: str, width: int) -> tup
         H = y0 + total + 20
         hub = (lx + colw + (rx - lx - colw) / 2, y0 + total / 2)
         y = y0
-        parts.append(f'<g class="head">{d.text("mono", 12, "STACK", lx, 22, 2)}{d.text("mono", 12, "FOCUS", rx, 22, 2)}</g>')
+        parts.append(d.mono_text(12, "STACK", lx, 22, "head", "start", 2) + d.mono_text(12, "FOCUS", rx, 22, "head", "start", 2))
         for i, ((name, tools), h) in enumerate(zip(cats, heights)):
             parts.append(f'<rect class="blk" x="{lx + .5}" y="{num(y + .5)}" width="{colw - 1}" height="{h - 1}" rx="8"/>')
-            parts.append(f'<g class="cat">{d.text("mono", lab_fs, name.upper(), lx + 16, y + 22, 1.8)}</g>')
+            parts.append(d.mono_text(lab_fs, name.upper(), lx + 16, y + 22, "cat", "start", 1.8))
             lines = wrap(d, "sans", tool_fs, " · ".join(tools), colw - 32)
             parts.append("".join(d.body_text(tool_fs, ln, lx + 16, y + 44 + j * 20, "tool") for j, ln in enumerate(lines)))
             port = (lx + colw, y + h / 2)
@@ -42,12 +42,14 @@ def render(t: dict, stack: dict, focus: list[str], tier: str, width: int) -> tup
             d.animate(f"q{i}", f"animation:led {CAT_PERIODS[i % 6]}s ease-in-out {i * .6:.1f}s infinite", "led")
             links.append(f"M{num(port[0] + 4)} {num(port[1])}C{num(port[0] + 60)} {num(port[1])} {num(hub[0] - 70)} {num(hub[1])} {num(hub[0] - 26)} {num(hub[1])}")
             y += h + gap
-        oh, ogap = 42, 14
-        oy = hub[1] - (len(focus) * oh + (len(focus) - 1) * ogap) / 2
-        for j, f in enumerate(focus):
-            yy = oy + j * (oh + ogap)
-            parts.append(f'<rect class="out" x="{rx + .5}" y="{num(yy + .5)}" width="{out_w - 1}" height="{oh - 1}" rx="{(oh - 1) / 2}"/>')
-            parts.append(d.body_text(out_fs, f, rx + 22, yy + oh / 2 + 5, "otxt"))
+        ogap = 14
+        flines = [wrap(d, "sans", out_fs, f, out_w - 40) for f in focus]
+        ohs = [26 + 20 * len(fl) - 4 for fl in flines]
+        oy = hub[1] - (sum(ohs) + (len(focus) - 1) * ogap) / 2
+        for j, (f, fl, oh) in enumerate(zip(focus, flines, ohs)):
+            yy = oy + sum(ohs[:j]) + j * ogap
+            parts.append(f'<rect class="out" x="{rx + .5}" y="{num(yy + .5)}" width="{out_w - 1}" height="{oh - 1}" rx="{min(20, (oh - 1) / 2)}"/>')
+            parts.append("".join(d.body_text(out_fs, ln, rx + 22, yy + 19 + k * 20, "otxt") for k, ln in enumerate(fl)))
             port = (rx, yy + oh / 2)
             parts.append(f'<circle class="port o{j}" cx="{num(port[0])}" cy="{num(port[1])}" r="3.5"/>')
             d.animate(f"o{j}", f"animation:led {OUT_PERIODS[j % 6]}s ease-in-out {1.2 + j * .6:.1f}s infinite", "led")
@@ -55,14 +57,14 @@ def render(t: dict, stack: dict, focus: list[str], tier: str, width: int) -> tup
     else:
         pad = 16
         y = 38
-        parts.append(f'<g class="head">{d.text("mono", 12, "STACK", pad, 22, 2)}</g>')
+        parts.append(d.mono_text(12, "STACK", pad, 22, "head", "start", 2))
         busx = W - pad - 6
         ports = []
         for i, (name, tools) in enumerate(cats):
             lines = wrap(d, "sans", tool_fs, " · ".join(tools), W - 2 * pad - 52)
             h = 34 + len(lines) * 20 + 8
             parts.append(f'<rect class="blk" x="{pad + .5}" y="{num(y + .5)}" width="{W - 2 * pad - 25}" height="{h - 1}" rx="8"/>')
-            parts.append(f'<g class="cat">{d.text("mono", lab_fs, name.upper(), pad + 14, y + 22, 1.6)}</g>')
+            parts.append(d.mono_text(lab_fs, name.upper(), pad + 14, y + 22, "cat", "start", 1.6))
             parts.append("".join(d.body_text(tool_fs, ln, pad + 14, y + 44 + j * 20, "tool") for j, ln in enumerate(lines)))
             port = (W - pad - 24, y + h / 2)
             ports.append(port)
@@ -73,17 +75,20 @@ def render(t: dict, stack: dict, focus: list[str], tier: str, width: int) -> tup
         for port in ports:
             links.append(f"M{num(port[0] + 4)} {num(port[1])}H{num(busx)}V{num(hub[1])}H{num(hub[0] + 26)}")
         y = hub[1] + 56
-        parts.append(f'<g class="head">{d.text("mono", 12, "FOCUS", pad, y - 16, 2)}</g>')
-        ow, oh = (W - 2 * pad - 10) / 2, 40
+        parts.append(d.mono_text(12, "FOCUS", pad, y - 16, "head", "start", 2))
+        # two columns when every focus area fits half the width, otherwise one
+        half = (W - 2 * pad - 10) / 2
+        ncol = 2 if all(d.width("sans", 14, f) + 32 <= half for f in focus) else 1
+        ow, oh = (half if ncol == 2 else W - 2 * pad), 40
         for j, f in enumerate(focus):
-            cx, cy_ = pad + (j % 2) * (ow + 10), y + (j // 2) * (oh + 10)
+            cx, cy_ = pad + (j % ncol) * (ow + 10), y + (j // ncol) * (oh + 10)
             parts.append(f'<rect class="out" x="{num(cx + .5)}" y="{num(cy_ + .5)}" width="{num(ow - 1)}" height="{oh - 1}" rx="{(oh - 1) / 2}"/>')
             parts.append(d.body_text(14, f, cx + ow / 2, cy_ + oh / 2 + 5, "otxt", "middle"))
             port = (cx + ow / 2, cy_)
             parts.append(f'<circle class="port o{j}" cx="{num(port[0])}" cy="{num(port[1])}" r="3"/>')
             d.animate(f"o{j}", f"animation:led {OUT_PERIODS[j % 6]}s ease-in-out {1.2 + j * .6:.1f}s infinite", "led")
             links.append(f"M{num(hub[0])} {num(hub[1] + 26)}V{num(hub[1] + 34)}H{num(port[0])}V{num(port[1] - 4)}")
-        H = y + ((len(focus) + 1) // 2) * (oh + 10) + 8
+        H = y + ((len(focus) + ncol - 1) // ncol) * (oh + 10) + 8
 
     # links underneath, signals travelling along them
     wires = "".join(f'<path class="link" d="{p}"/>' for p in links)

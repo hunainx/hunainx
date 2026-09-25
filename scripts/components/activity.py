@@ -69,7 +69,7 @@ def low_data(t: dict, gh: dict, labels: dict, tier: str, width: int) -> tuple[st
         tx, ty = 20, cy + R + 42
     head = labels["activity_header"]
     d.add(f'<circle class="led" cx="{num(tx + 3.5)}" cy="{num(ty - 26)}" r="3"/>'
-          f'<g class="head">{d.text("mono", 12, head, tx + 14, ty - 22, 2)}</g>')
+          + d.mono_text(12, head, tx + 14, ty - 22, "head", "start", 2))
     d.animate("led", "animation:led 2.3s ease-in-out infinite", "led")
     fs = 22 if not mobile else 19
     g, end = d.typed("bl", "mono", fs, labels["activity_low"], tx, ty + 12, 1.0, .06, 0, "big")
@@ -77,13 +77,11 @@ def low_data(t: dict, gh: dict, labels: dict, tier: str, width: int) -> tuple[st
     cw = d.width("mono", fs, labels["activity_low"])
     d.add(f'<rect class="cur" x="{num(tx + cw + 3)}" y="{num(ty + 12 - fs * .8)}" width="{num(fs * .6 - 1)}" height="{num(fs * 1.02)}"/>')
     d.animate("cur", "animation:blink 1.1s steps(1,end) infinite", "blink")
-    cap = f"{total} {labels['activity_caption']}"
-    d.add(d.body_text(15, cap, tx, ty + 44, "cap"))
 
     d.rule(f".panel{{fill:{t['surface']};stroke:{t['line']}}}.ring{{fill:none;stroke:{t['line_strong']}}}"
            f".beam{{stroke:{t['accent']};stroke-width:1.5}}.blip{{fill:{t['accent']}}}.led{{fill:{t['accent']}}}"
            f".head{{fill:{t['muted']}}}.big{{fill:{t['text']}}}.cur{{fill:{t['accent']}}}.cap{{fill:{t['muted']}}}")
-    desc = f"Activity: {labels['activity_low']}. {cap}."
+    desc = f"Activity: {labels['activity_low']}."
     return d.render(H, "Activity", desc), d.anim
 
 
@@ -120,7 +118,7 @@ def with_data(t: dict, gh: dict, profile: dict, cfg: dict, tier: str, width: int
     # cell size fits 52 columns into the tier width
     cs, gp = {"desktop": (11, 3), "mid": (8, 2.4), "mobile": (4.6, 1.3)}[tier]
     gx = pad
-    nb = 20
+    nb = 14
     # one path per (wave band, level). A cell is a zero-length stroke with a square cap
     # (stroke-width = cell size), reached by a relative move from the previous cell.
     cells: dict[tuple[int, int], list[tuple[float, float]]] = {}
@@ -157,7 +155,7 @@ def with_data(t: dict, gh: dict, profile: dict, cfg: dict, tier: str, width: int
             d.add(f'<rect class="bar r{i}" x="{pad + 110}" y="{yy + 2}" width="{num(max(bw * float(s["pct"]) / 100, 3))}" height="8" rx="4" '
                   f'fill="{colors.get(s["name"], t["faint"])}"/>')
             d.animate(f"r{i}", f"transform-origin:{pad + 110}px {yy + 6}px;animation:grow .9s cubic-bezier(.2,.7,.2,1) {.6 + i * .1:.2f}s backwards")
-            d.add(f'<g class="pct">{d.text("mono", 13, s["pct"] + "%", W - pad, yy + 11, 0, "end")}</g>')
+            d.add(d.mono_text(13, s["pct"] + "%", W - pad, yy + 11, "pct", "end"))
         d.keyframes("grow", "from{transform:scaleX(0)}")
         y += len(share) * 24 + 4
     H = y + 12

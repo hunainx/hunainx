@@ -9,22 +9,23 @@ from __future__ import annotations
 import math
 import re
 
-from svgkit import num
+from svgkit import esc_text, num
 
 from .base import Doc, hgrad, lead, radial_glow, split_tokens
 
-STAGES = ["agents", "spec", "build", "audit", "ship"]
+STAGES = ["challenge", "spec", "architect", "agents", "audit", "ship"]
+LOOP = ("audit", "agents")  # audit findings go back to the agents (the build team)
 LAYOUT = {
-    #          pad  name  role  tag  meta tick  chipw chiph labels_in_chip
-    "desktop": (32, 46, 15, 17, 12, 15, 110, 42, True),
-    "mid":     (24, 40, 14, 16, 12, 14, 52, 44, False),
-    "mobile":  (18, 32, 13, 16, 13, 13, 46, 44, False),
+    #          pad  name  role  tag  meta tick  chipw chiph label_fs
+    "desktop": (32, 46, 15, 17, 12, 15, 56, 46, 13),
+    "mid":     (24, 40, 14, 16, 12, 14, 52, 44, 12),
+    "mobile":  (18, 32, 13, 16, 13, 13, 50, 44, 13),
 }
 
 
 def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[str, int]:
     W = width
-    pad, name_fs, role_fs, tag_fs, meta_fs, tick_fs, cw, ch, inside = LAYOUT[tier]
+    pad, name_fs, role_fs, tag_fs, meta_fs, tick_fs, cw, ch, lab_fs = LAYOUT[tier]
     d = Doc(W, t)
     name = profile["name"].strip()
     role = (profile.get("role") or "").strip()
@@ -48,13 +49,17 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
         role_ys.append(y)
         y += role_fs + 7
     y += 10
-    tag_lines = split_tokens(d, "sans", tag_fs, re.split(r"(?<=[.!?]) ", tagline), " ", text_w, 0) if tagline else []
+    tag_tokens = []
+    for sentence in re.split(r"(?<=[.!?]) ", tagline) if tagline else []:
+        tag_tokens += sentence.split(" ") if d.width("sans", tag_fs, sentence) > text_w else [sentence]
+    tag_lines = split_tokens(d, "sans", tag_fs, tag_tokens, " ", text_w, 0)
     tag_ys = []
     for _ in tag_lines:
         tag_ys.append(y)
         y += tag_fs + 7
     cy = y + (72 if desktop else 70)
-    y = cy + ch / 2 + (22 if inside else 44)
+    pts = stage_points(tier, W, x0, cw, ch, cy)
+    y = max(p[1] for p in pts) + ch / 2 + 44
     tick_y = y + (14 if tier == "mobile" else 8)
     bot_g = tick_y + 24
     H = bot_g + 36
@@ -89,7 +94,7 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
         if not txt:
             continue
         glyph = d.icon("branch", x0 - 1, H - 13 - 12, "gl", .9) if branch else ""
-        d.add(f'<g class="meta c{i}">{glyph}{d.text("mono", meta_fs, txt, cx, cy_, 1.2, anc)}</g>')
+        d.add(f'<g class="meta c{i}">{glyph}{d.mono_text(meta_fs, txt, cx, cy_, "mt", anc, 1.2)}</g>')
         d.animate(f"c{i}", f"animation:fade .6s ease-out {0.25 + i * .15:.2f}s backwards", "fade")
 
     # ---------------- name: mask sweep with a travelling light edge
@@ -121,56 +126,7 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
     agents_cluster(d, t, tier, W, x0, top_g, name_y, agents)
 
     # ---------------- pipeline diagram
-    n = len(STAGES)
-    xs = [x0 + cw / 2 + i * (W - 2 * x0 - cw) / (n - 1) for i in range(n)]
-    g = []
-    lift = 30 if desktop else 26
-    top = cy - ch / 2 - 2
-    loop = f"M{num(xs[3])} {num(top)}C{num(xs[3])} {num(top - lift)} {num(xs[2])} {num(top - lift)} {num(xs[2])} {num(top)}"
-    g.append(f'<path class="loop" d="{loop}"/><path class="chev" d="M{num(xs[2] - 3.5)} {num(top - 5)}l3.5 4 3.5-4"/>')
-    g.append('<rect class="rpkt" x="-3.5" y="-2" width="7" height="4" rx="2"/>')
-    d.animate("rpkt", f"offset-path:path('{loop}');offset-rotate:auto;animation:ret 6.3s cubic-bezier(.5,0,.5,1) 4.1s infinite")
-    d.keyframes("ret", "0%{offset-distance:0%;opacity:0}6%{opacity:1}34%{opacity:1}40%,100%{offset-distance:100%;opacity:0}")
-    wires, flow = [], []
-    for i in range(n - 1):
-        a, b = xs[i] + cw / 2 + 4, xs[i + 1] - cw / 2 - 4
-        wires.append(f"M{num(a)} {num(cy + .5)}H{num(b)}")
-        flow.append(f"M{num(a)} {num(cy + .5)}H{num(b - 5)}")
-        g.append(f'<path class="chev" d="M{num(b - 5)} {num(cy - 3)}l4 3.5-4 3.5"/>')
-    g.append(f'<path class="wire" d="{"".join(wires)}"/><path class="flow" d="{"".join(flow)}"/>')
-    d.animate("flow", "animation:march 1.9s linear infinite", "march")
-    for i, dur in enumerate([3.1, 4.7, 3.7, 5.3]):
-        a, b = xs[i] + cw / 2 + 4, xs[i + 1] - cw / 2 - 10
-        if b - a < 8:
-            continue
-        g.append(f'<rect class="pkt p{i}" x="{num(a)}" y="{num(cy - 1.5)}" width="7" height="4" rx="2"/>')
-        d.animate(f"p{i}", f"animation:pk{i} {dur}s cubic-bezier(.5,0,.5,1) {2.3 + i * .7:.2f}s infinite")
-        d.keyframes(f"pk{i}", f"0%{{transform:translateX(0);opacity:0}}8%{{opacity:1}}42%{{transform:translateX({num(b - a)}px);opacity:1}}"
-                              f"48%,100%{{transform:translateX({num(b - a)}px);opacity:0}}")
-    for i, (stage, period) in enumerate(zip(STAGES, [2.3, 3.1, 1.9, 4.3, 2.9])):
-        x = xs[i] - cw / 2
-        g.append(f'<rect class="chip" x="{num(x + .5)}" y="{num(cy - ch / 2 + .5)}" width="{cw - 1}" height="{ch - 1}" rx="8"/>')
-        if inside:
-            ix = x + 14
-            g.append(d.icon(stage, ix, cy - 8))
-            g.append(f'<g class="lbl">{d.text("mono", 13, stage.upper(), x + 38, cy + 4.6, 1.6)}</g>')
-            led = (x + cw - 9, cy - ch / 2 + 9)
-        else:
-            ix = xs[i] - 8
-            g.append(d.icon(stage, ix, cy - 8))
-            g.append(f'<g class="lbl">{d.text("mono", 13 if tier == "mobile" else 12, stage.upper(), xs[i], cy + ch / 2 + 20, 0, "middle")}</g>')
-            led = (x + cw - 7, cy - ch / 2 + 7)
-        g.append(f'<circle class="led l{i}" cx="{num(led[0])}" cy="{num(led[1])}" r="2.5"/>')
-        d.animate(f"l{i}", f"animation:led {period}s ease-in-out {i * .37:.2f}s infinite", "led")
-        if stage == "audit":
-            # scanner sweeps the icon only (behind nothing, never over the label)
-            d.defs.append(f'<clipPath id="ac"><rect x="{num(ix - 3)}" y="{num(cy - 11)}" width="22" height="22" rx="3"/></clipPath>')
-            hgrad(d, "scg", t["accent2"], "0", ".5")
-            g.append(f'<g clip-path="url(#ac)"><g class="scan"><rect x="{num(ix - 15)}" y="{num(cy - 11)}" width="12" height="22" fill="url(#scg)"/>'
-                     f'<rect x="{num(ix - 3.5)}" y="{num(cy - 11)}" width="1.2" height="22" class="scanl"/></g></g>')
-            d.animate("scan", "animation:scan 2.9s cubic-bezier(.45,0,.55,1) 2s infinite alternate")
-            d.keyframes("scan", "from{transform:translateX(0)}to{transform:translateX(24px)}")
-    d.add(f'<g class="diag">{"".join(g)}</g>')
+    d.add('<g class="diag">' + diagram(d, t, tier, pts, cw, ch, lab_fs) + "</g>")
     d.animate("diag", "animation:rise .9s cubic-bezier(.2,.7,.2,1) 1.7s backwards", "rise")
 
     # ---------------- log ticker: first sentence of each principle, typed then faded
@@ -178,17 +134,17 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
         ticker_block(d, ticker, x0, tick_y, tick_fs)
 
     d.rule(f".guide{{stroke:{t['line_strong']};fill:none}}.cross{{stroke:{t['faint']};fill:none}}"
-           f".meta{{fill:{t['muted']}}}.gl{{fill:none;stroke:{t['muted']};stroke-width:1.3}}"
+           f".meta,.mt{{fill:{t['muted']}}}.gl{{fill:none;stroke:{t['muted']};stroke-width:1.3}}"
            f".name{{fill:{t['text']}}}.edge{{fill:{t['accent']}}}.role{{fill:{t['accent_text']}}}.tag{{fill:{t['muted']}}}"
            f".chip{{fill:{t['surface']};stroke:{t['line_strong']}}}.ic{{fill:none;stroke:{t['text']};stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}}"
            f".lbl{{fill:{t['text']}}}.led{{fill:{t['accent']}}}.wire{{stroke:{t['line_strong']};fill:none}}"
            f".flow{{stroke:{t['accent']};stroke-opacity:.55;stroke-dasharray:2 6;fill:none}}.chev{{stroke:{t['muted']};fill:none;stroke-width:1.2}}"
            f".pkt{{fill:{t['accent']}}}.loop{{fill:none;stroke:{t['accent2']};stroke-opacity:.6;stroke-dasharray:3 4}}.rpkt{{fill:{t['accent2']};opacity:0}}"
            f".scanl{{fill:{t['accent2']}}}.orb{{fill:none;stroke:{t['line_strong']};stroke-dasharray:1 5}}.sat{{fill:{t['accent']}}}"
-           f".core{{fill:{t['surface']};stroke:{t['line_strong']}}}.alab{{fill:{t['text']}}}.ahead{{fill:{t['muted']}}}"
+           f".core{{fill:{t['surface']};stroke:{t['line_strong']}}}.alab{{fill:{t['text']}}}.ahead{{fill:{t['muted']}}}.adot{{fill:{t['accent']}}}"
            f".pr{{fill:{t['accent_text']}}}.tk{{fill:{t['text']}}}.cur{{fill:{t['accent']}}}")
     parts = [f"{name}.", f"{role}." if role else "", tagline,
-             "Diagram of how I work: agents, spec, build, audit, ship, with audit findings looping back to build.",
+             "Diagram of how I work: " + ", ".join(STAGES) + ", with audit findings looping back to the agents.",
              f"Agents: {', '.join(agents)}." if agents else "",
              ("Principles: " + " ".join(ticker)) if ticker else "",
              " · ".join(v for v in meta.values() if v) + "."]
@@ -198,7 +154,7 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
 def agents_cluster(d: Doc, t: dict, tier: str, W: int, x0: float, top_g: float, name_y: float, agents: list[str]) -> None:
     """Orbiting agent nodes. Desktop also lists the agent tools (true labels from profile.yml)."""
     if tier == "desktop":
-        ocx, ocy, r = W - x0 - 236, top_g + 60, 36
+        ocx, ocy, r = W - x0 - 206, top_g + 64, 32
     elif tier == "mid":
         ocx, ocy, r = W - x0 - 40, top_g + 50, 30
     else:
@@ -209,18 +165,17 @@ def agents_cluster(d: Doc, t: dict, tier: str, W: int, x0: float, top_g: float, 
              d.icon("agents", ocx - 8, ocy - 8, "ic", 1 if tier != "mobile" else .8)]
     if tier == "mobile":
         parts[-1] = d.icon("agents", ocx - 6.4, ocy - 6.4, "ic", .8)
-    count = max(len(agents), 2)
-    for k in range(count):
+    for k in range(3):
         parts.append(f'<circle class="sat s{k}" r="{2.6 - k * .4:.1f}"/>')
-        d.animate(f"s{k}", f"offset-path:path('{orbit}');animation:orbit 9.7s linear {-k * 9.7 / count:.2f}s infinite", "orbit")
+        d.animate(f"s{k}", f"offset-path:path('{orbit}');animation:orbit 9.7s linear {-k * 9.7 / 3:.2f}s infinite", "orbit")
     if tier == "desktop" and agents:
-        lx = ocx + r + 26
-        parts.append(f'<g class="ahead">{d.text("mono", 12, "AGENTS", lx, ocy - 22, 2)}</g>')
-        for k, a in enumerate(agents[:3]):
-            yy = ocy + 2 + k * 22
-            parts.append(f'<circle class="led a{k}" cx="{num(lx + 3)}" cy="{num(yy - 4)}" r="2.5"/>')
-            parts.append(f'<g class="alab">{d.text("mono", 13, a, lx + 14, yy)}</g>')
-            d.animate(f"a{k}", f"animation:led {4.7 + k * 1.4:.1f}s ease-in-out {k * .9:.1f}s infinite", "led")
+        lx = ocx + r + 24
+        top = ocy - 16 * (len(agents) - 1) / 2
+        parts.append(d.mono_text(11, "AGENTS", lx, top - 16, "ahead", "start", 2))
+        for k, a in enumerate(agents):
+            yy = top + k * 16 + 4
+            parts.append(f'<circle class="adot" cx="{num(lx + 2.5)}" cy="{num(yy - 4)}" r="2"/>')
+            parts.append(d.mono_text(12, a, lx + 11, yy, "alab"))
     d.add('<g class="clus">' + "".join(parts) + "</g>")
     d.animate("clus", "animation:fade .8s ease-out 1.5s backwards", "fade")
 
@@ -254,3 +209,74 @@ def ticker_block(d: Doc, ticker: list[str], x0: float, tick_y: float, fs: float)
     d.animate("blink", "animation:blink 1.1s steps(1,end) infinite", "blink")
     d.add('<g class="tin">' + "".join(parts) + "</g>")
     d.animate("tin", f"animation:fade .6s ease-out {t0 - .5:.2f}s backwards", "fade")
+
+
+def stage_points(tier: str, W: int, x0: float, cw: float, ch: float, cy: float) -> list[tuple[float, float]]:
+    """Chip centres. Desktop/mid: one row. Mobile: two rows of three; the second row runs right
+    to left so the third stage drops straight into the fourth."""
+    n = len(STAGES)
+    inset = 14  # the widest stage label (CHALLENGE) is wider than a chip; keep it inside the frame
+    if tier != "mobile":
+        return [(x0 + inset + cw / 2 + i * (W - 2 * (x0 + inset) - cw) / (n - 1), cy) for i in range(n)]
+    cols = 3
+    xs = [x0 + inset + cw / 2 + c * (W - 2 * (x0 + inset) - cw - 14) / (cols - 1) for c in range(cols)]
+    row2 = cy + ch + 78
+    return [(xs[i], cy) if i < cols else (xs[2 * cols - 1 - i], row2) for i in range(n)]
+
+
+def diagram(d: Doc, t: dict, tier: str, pts: list, cw: float, ch: float, lab_fs: float) -> str:
+    g, wires, flow = [], [], []
+    n = len(STAGES)
+    k = 0
+    # edges: horizontal within a row (either direction); a side connector between rows
+    for i in range(n - 1):
+        (ax, ay), (bx, by) = pts[i], pts[i + 1]
+        if ay == by:
+            sgn = 1 if bx > ax else -1
+            a, b = ax + sgn * (cw / 2 + 4), bx - sgn * (cw / 2 + 4)
+            wires.append(f"M{num(a)} {num(ay + .5)}H{num(b)}")
+            flow.append(f"M{num(a)} {num(ay + .5)}H{num(b - sgn * 5)}")
+            g.append(f'<path class="chev" d="M{num(b - sgn * 5)} {num(ay - 3)}l{4 * sgn} 3.5{-4 * sgn} 3.5"/>')
+            if abs(b - a) > 22:
+                dur = [3.1, 4.7, 3.7, 5.3, 4.1][k % 5]
+                start = a if sgn > 0 else a - 7
+                dist = (b - sgn * 12) - a
+                g.append(f'<rect class="pkt p{k}" x="{num(start)}" y="{num(ay - 1.5)}" width="7" height="4" rx="2"/>')
+                d.animate(f"p{k}", f"animation:pk{k} {dur}s cubic-bezier(.5,0,.5,1) {2.3 + k * .7:.2f}s infinite")
+                d.keyframes(f"pk{k}", f"0%{{transform:translateX(0);opacity:0}}8%{{opacity:1}}42%{{transform:translateX({num(dist)}px);opacity:1}}"
+                                      f"48%,100%{{transform:translateX({num(dist)}px);opacity:0}}")
+                k += 1
+        else:
+            side = ax + cw / 2
+            # route outside the label (ARCHITECT is wider than its chip)
+            wires.append(f"M{num(side)} {num(ay)}h16V{num(by)}h-16")
+            flow.append(f"M{num(side)} {num(ay + .5)}h16V{num(by + .5)}h-11")
+            g.append(f'<path class="chev" d="M{num(side + 5)} {num(by - 3.5)}l-4 3.5 4 3.5"/>')
+    g.append(f'<path class="wire" d="{"".join(wires)}"/><path class="flow" d="{"".join(flow)}"/>')
+    d.animate("flow", "animation:march 1.9s linear infinite", "march")
+
+    # return loop: audit -> agents, arcing over the chips
+    (sx, sy), (ex, ey) = pts[STAGES.index(LOOP[0])], pts[STAGES.index(LOOP[1])]
+    top_s, top_e, lift = sy - ch / 2 - 2, ey - ch / 2 - 2, 28
+    loop = f"M{num(sx)} {num(top_s)}C{num(sx)} {num(top_s - lift)} {num(ex)} {num(top_e - lift)} {num(ex)} {num(top_e)}"
+    g.append(f'<path class="loop" d="{loop}"/><path class="chev" d="M{num(ex - 3.5)} {num(top_e - 5)}l3.5 4 3.5-4"/>')
+    g.append('<rect class="rpkt" x="-3.5" y="-2" width="7" height="4" rx="2"/>')
+    d.animate("rpkt", f"offset-path:path('{loop}');offset-rotate:auto;animation:ret 6.3s cubic-bezier(.5,0,.5,1) 4.1s infinite")
+    d.keyframes("ret", "0%{offset-distance:0%;opacity:0}6%{opacity:1}34%{opacity:1}40%,100%{offset-distance:100%;opacity:0}")
+
+    # chips: icon, status LED, label below
+    for i, (stage, (x, y)) in enumerate(zip(STAGES, pts)):
+        g.append(f'<rect class="chip" x="{num(x - cw / 2 + .5)}" y="{num(y - ch / 2 + .5)}" width="{cw - 1}" height="{ch - 1}" rx="8"/>')
+        g.append(d.icon(stage, x - 8, y - 8))
+        g.append(f'<g class="lbl">{d.text("mono", lab_fs, stage.upper(), x, y + ch / 2 + 20, 1.2 if tier == "desktop" else 0, "middle")}</g>')
+        g.append(f'<circle class="led l{i}" cx="{num(x + cw / 2 - 7)}" cy="{num(y - ch / 2 + 7)}" r="2.5"/>')
+        d.animate(f"l{i}", f"animation:led {[2.3, 3.1, 1.9, 4.3, 2.9, 3.7][i % 6]}s ease-in-out {i * .37:.2f}s infinite", "led")
+        if stage == "audit":
+            # the scanner sweeps the icon only, never the label
+            d.defs.append(f'<clipPath id="ac"><rect x="{num(x - 11)}" y="{num(y - 11)}" width="22" height="22" rx="3"/></clipPath>')
+            hgrad(d, "scg", t["accent2"], "0", ".5")
+            g.append(f'<g clip-path="url(#ac)"><g class="scan"><rect x="{num(x - 23)}" y="{num(y - 11)}" width="12" height="22" fill="url(#scg)"/>'
+                     f'<rect x="{num(x - 11.5)}" y="{num(y - 11)}" width="1.2" height="22" class="scanl"/></g></g>')
+            d.animate("scan", "animation:scan 2.9s cubic-bezier(.45,0,.55,1) 2s infinite alternate")
+            d.keyframes("scan", "from{transform:translateX(0)}to{transform:translateX(24px)}")
+    return "".join(g)
