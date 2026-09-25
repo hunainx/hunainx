@@ -123,7 +123,7 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
         d.animate("rise", f"animation:rise .9s cubic-bezier(.2,.7,.2,1) {max(t_role - .5, 1.4):.2f}s backwards", "rise")
 
     # ---------------- agents cluster (top-right quadrant)
-    agents_cluster(d, t, tier, W, x0, top_g, name_y, agents)
+    agents_cluster(d, t, tier, W, x0, top_g, name_y, agents, x0 + nw, name_fs)
 
     # ---------------- pipeline diagram
     d.add('<g class="diag">' + diagram(d, t, tier, pts, cw, ch, lab_fs) + "</g>")
@@ -151,10 +151,25 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
     return d.render(H, name, " ".join(p for p in parts if p)), d.anim
 
 
-def agents_cluster(d: Doc, t: dict, tier: str, W: int, x0: float, top_g: float, name_y: float, agents: list[str]) -> None:
-    """Orbiting agent nodes. Desktop also lists the agent tools (true labels from profile.yml)."""
+def agents_cluster(d: Doc, t: dict, tier: str, W: int, x0: float, top_g: float, name_y: float, agents: list[str],
+                   name_right: float = 0, name_fs: float = 46) -> None:
+    """Orbiting agent nodes. Desktop also lists the agent tools (true labels from profile.yml) in
+    columns of three, right-aligned to the same inset as the name and aligned to the name's cap line."""
     if tier == "desktop":
-        ocx, ocy, r = W - x0 - 206, top_g + 64, 32
+        # list block: columns of up to three, widths measured with JetBrains Mono (>= system mono)
+        cols = [agents[i:i + 3] for i in range(0, len(agents), 3)]
+        col_w = [11 + max(d.width("mono", 12, a) for a in col) for col in cols]
+        list_w = sum(col_w) + 18 * (len(cols) - 1)
+        list_x = W - x0 - list_w
+        cap_top = name_y - name_fs * .73          # cap height of Inter Display
+        head_y = cap_top + 8                      # 11px heading: cap top on the name's cap line
+        rows_y = [head_y + 20 + k * 17 for k in range(3)]
+        r = 30
+        ocy = (cap_top + rows_y[-1]) / 2
+        ocx = list_x - 26 - r
+        if ocx - r - 6 < name_right + 24:         # never crowd the name: shrink the orbit if needed
+            r = max(18, (list_x - 26 - name_right - 24 - 6) / 2)
+            ocx = list_x - 26 - r
     elif tier == "mid":
         ocx, ocy, r = W - x0 - 40, top_g + 50, 30
     else:
@@ -169,13 +184,13 @@ def agents_cluster(d: Doc, t: dict, tier: str, W: int, x0: float, top_g: float, 
         parts.append(f'<circle class="sat s{k}" r="{2.6 - k * .4:.1f}"/>')
         d.animate(f"s{k}", f"offset-path:path('{orbit}');animation:orbit 9.7s linear {-k * 9.7 / 3:.2f}s infinite", "orbit")
     if tier == "desktop" and agents:
-        lx = ocx + r + 24
-        top = ocy - 16 * (len(agents) - 1) / 2
-        parts.append(d.mono_text(11, "AGENTS", lx, top - 16, "ahead", "start", 2))
-        for k, a in enumerate(agents):
-            yy = top + k * 16 + 4
-            parts.append(f'<circle class="adot" cx="{num(lx + 2.5)}" cy="{num(yy - 4)}" r="2"/>')
-            parts.append(d.mono_text(12, a, lx + 11, yy, "alab"))
+        parts.append(d.mono_text(11, "AGENTS", list_x, head_y, "ahead", "start", 2))
+        cx = list_x
+        for col, w in zip(cols, col_w):
+            for k, a in enumerate(col):
+                parts.append(f'<circle class="adot" cx="{num(cx + 2.5)}" cy="{num(rows_y[k] - 4)}" r="2"/>')
+                parts.append(d.mono_text(12, a, cx + 11, rows_y[k], "alab"))
+            cx += w + 18
     d.add('<g class="clus">' + "".join(parts) + "</g>")
     d.animate("clus", "animation:fade .8s ease-out 1.5s backwards", "fade")
 
