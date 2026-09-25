@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+qa/
+# Local build spec; not part of the published profile.
+PRD.md
+# Design reference material; study only, never published.
+reference/
+# Redesign brief; local only.
+REDESIGN.md

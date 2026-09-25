@@ -1,0 +1,22 @@
+# One block per "Currently building" card, in the same order as profile.yml `now`.
+# Empty fields are hidden, never guessed.
+
+building:
+  - id: "01"
+    codename: ""
+    summary: ""          # empty = profile.yml now[0]
+    stack: ["Supabase", "Postgres", "Google Cloud Storage", "Claude Code"]
+    status: ""           # hidden until confirmed
+    private: true
+  - id: "02"
+    codename: ""
+    summary: ""          # empty = profile.yml now[1]
+    stack: ["Supabase", "Postgres"]
+    status: ""
+    private: true
+  - id: "03"
+    codename: ""
+    summary: ""          # empty = profile.yml now[2]
+    stack: ["Claude Code", "Google Antigravity"]
+    status: ""
+    private: true

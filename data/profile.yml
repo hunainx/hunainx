@@ -1,0 +1,54 @@
+# Profile content. Edit and push; the workflow rebuilds the README.
+# Empty fields are omitted from the profile.
+
+name: "Hunain Ahmed"
+
+# Hero subtitle (rendered uppercase).
+role: "AI · Software · Product builder"
+
+positioning: "I design and ship software end to end: apps, games, SaaS platforms and bespoke systems for businesses."
+
+focus: ["Product engineering", "SaaS platforms", "Games", "Bespoke software"]
+
+tagline: "Precise specs. Rigorous audits. Software that holds up in production."
+
+about: >-
+  I design and build software end to end: web and mobile apps, games, SaaS
+  platforms and bespoke systems for businesses. My practice is AI-native. Every
+  product begins as a precise written specification, is built with AI coding
+  agents under close direction, and passes an adversarial audit before it ships.
+  The result is software delivered quickly and built to last. I'm based in
+  Mysuru, India, and also work across brand and digital growth.
+
+now:
+  - "Building a legal investigation platform: document ingestion, high-performance search and evidence analysis"
+  - "Engineering a booking platform: live availability, scheduling and an admin console"
+  - "Conducting adversarial audits of AI-built codebases before launch"
+
+stack:
+  AI engineering:  ["Claude Code", "Google Antigravity"]
+  Data:            ["Supabase", "Postgres", "Google Cloud Storage"]
+  Interactive web: ["GSAP + ScrollTrigger", "WebGL2"]
+  Delivery:        ["GitHub", "Netlify"]
+
+# Public repos to feature. Empty = auto-pick recent public, non-fork repos.
+featured_repos: []
+
+repo_blurbs: {}
+
+links:
+  website: ""
+  linkedin: ""
+  x: ""
+  email: ""
+
+principles:
+  - "Specification before code. A precise spec is the fastest route to a correct product."
+  - "Audit like an adversary. Every finding is ranked by severity, and fixes follow priority, not convenience."
+  - "Evidence over assertion. If a claim cannot be verified, it does not ship."
+
+# Visual accent: ember | signal | ion
+accent: "ember"
+
+# Show private contribution count (no details) when a PROFILE_READ_TOKEN secret exists.
+show_private_contribution_count: true

@@ -1,0 +1,3 @@
+pyyaml==6.0.3
+fonttools==4.63.0
+playwright  # preview.py only

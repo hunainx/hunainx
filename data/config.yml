@@ -1,0 +1,68 @@
+# Build configuration. Content lives in data/profile.yml; this file is layout + rules.
+
+login: hunainx
+
+# Section visibility thresholds (PRD §6). A section below its threshold is omitted.
+thresholds:
+  stats_min_public_repos: 1        # eligible public repos (non-fork, non-archived, not the profile repo)
+  activity_min_contributions: 10   # public contributions in the last 12 months
+  languages_min_repos: 1           # eligible public repos that report language bytes
+
+selected_work:
+  max_cards: 4                     # auto-pick when profile.yml featured_repos is empty
+  max_topics: 3
+
+# Viewports at or below this width get the narrow (360px) variants of text-bearing assets.
+# Measured on github.com: below 1012px the README column is 308-685px wide (the sidebar appears
+# at 768px and squeezes it to ~400px), so 840px art would render small text under 11px there.
+mobile_breakpoint_px: 1011
+
+# Static hero meta line (PRD §8.1). Location is already public on the profile.
+hero_meta: "MYSURU, IN · 12.30°N 76.64°E · IST (UTC+5:30)"
+hero_meta_mobile: ["MYSURU, IN · 12.30°N 76.64°E", "IST (UTC+5:30)"]
+
+# Colour tokens (PRD §7). `faint` is decorative only: it fails 4.5:1 as text.
+tokens:
+  dark:
+    bg: "#0D1117"
+    surface: "#11161D"
+    line: "#1F2630"
+    line_strong: "#2D3542"
+    text: "#E6EDF3"
+    muted: "#8B96A5"
+    faint: "#4A5361"
+  light:
+    bg: "#FFFFFF"
+    surface: "#F6F8FA"
+    line: "#D8DEE4"
+    line_strong: "#C4CCD5"
+    text: "#1F2328"
+    muted: "#59636E"
+    faint: "#8C959F"
+
+# primary/secondary are used for fills and strokes; *_text for any glyphs drawn in the accent.
+# Light ember primary #B5611C is 4.48:1 on white, so its text variant is darkened to pass 4.5:1.
+accents:
+  ember:
+    dark:  { primary: "#F2A65A", secondary: "#7AA2F7", primary_text: "#F2A65A" }
+    light: { primary: "#B5611C", secondary: "#3E63DD", primary_text: "#AA5B1A" }
+  signal:
+    dark:  { primary: "#4ADE80", secondary: "#F2A65A", primary_text: "#4ADE80" }
+    light: { primary: "#15803D", secondary: "#B5611C", primary_text: "#15803D" }
+  ion:
+    dark:  { primary: "#5CC8FF", secondary: "#F2A65A", primary_text: "#5CC8FF" }
+    light: { primary: "#0B6FA4", secondary: "#B5611C", primary_text: "#0B6FA4" }
+
+# Size budgets (PRD §2 / §11), bytes.
+budgets:
+  svg_max: 40960
+  hero_max: 71680
+  assets_total_max: 409600
+
+# Fixed labels used next to API numbers in the Signal section.
+labels:
+  public_repos: "Public repos"
+  stars: "Stars earned"
+  contributions: "Contributions (12 mo)"
+  private_contributions: "Private contributions (12 mo)"
+  activity_caption: "contributions in the last 12 months"
