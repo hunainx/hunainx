@@ -12,14 +12,32 @@ selected_work:
   max_cards: 4                     # auto-pick when profile.yml featured_repos is empty
   max_topics: 3
 
-# Viewports at or below this width get the narrow (360px) variants of text-bearing assets.
-# Measured on github.com: below 1012px the README column is 308-685px wide (the sidebar appears
-# at 768px and squeezes it to ~400px), so 840px art would render small text under 11px there.
-mobile_breakpoint_px: 1011
+# Responsive tiers. Each <picture> lists the widest tier first (GitHub's themed-picture script
+# keeps only the first source of the viewer's theme when they use an explicit theme).
+# Measured README column: >= 1260px viewport: 826-846px; 1012-1259px: 578-826px; < 1012px: 308-685px.
+tiers:
+  desktop: { width: 840, min_viewport: 1260 }
+  mid:     { width: 600, min_viewport: 1012 }
+  mobile:  { width: 360 }
+# Components that get the 600px mid tier (others use desktop art from 1012px). All full-width
+# components share it so their edges line up at every width; work cards (410px) never scale.
+mid_tier: [hero, label, building, stack, activity, separator]
 
-# Static hero meta line (PRD §8.1). Location is already public on the profile.
-hero_meta: "MYSURU, IN · 12.30°N 76.64°E · IST (UTC+5:30)"
-hero_meta_mobile: ["MYSURU, IN · 12.30°N 76.64°E", "IST (UTC+5:30)"]
+hero:
+  agents_category: "AI engineering"     # profile.yml stack category listed beside the agent orbit
+  corners:                              # true values only
+    top_left: "MYSURU, IN"
+    top_right: "UTC+5:30"
+    bottom_left: "main"
+    bottom_right: "hunainx/hunainx"
+
+# Terminal label + native heading for each section.
+sections:
+  building:   { command: "./building --now", heading: "Currently building" }
+  work:       { command: "ls ./work",        heading: "Selected work" }
+  stack:      { command: "tree ./stack",     heading: "Stack" }
+  activity:   { command: "./activity",       heading: "Activity" }
+  principles: { command: "cat ./principles", heading: "How I work" }
 
 # Colour tokens (PRD §7). `faint` is decorative only: it fails 4.5:1 as text.
 tokens:
@@ -53,16 +71,20 @@ accents:
     dark:  { primary: "#5CC8FF", secondary: "#F2A65A", primary_text: "#5CC8FF" }
     light: { primary: "#0B6FA4", secondary: "#B5611C", primary_text: "#0B6FA4" }
 
-# Size budgets (PRD §2 / §11), bytes.
+# Size and motion budgets (REDESIGN §5), bytes / element counts.
 budgets:
-  svg_max: 40960
-  hero_max: 71680
-  assets_total_max: 409600
+  svg_max: 61440
+  hero_max: 92160
+  assets_total_max: 716800
+  max_animated_elements: 40
 
-# Fixed labels used next to API numbers in the Signal section.
+# Fixed labels used next to API numbers and in system-style captions.
 labels:
   public_repos: "Public repos"
   stars: "Stars earned"
   contributions: "Contributions (12 mo)"
   private_contributions: "Private contributions (12 mo)"
-  activity_caption: "contributions in the last 12 months"
+  activity_caption: "public contributions in the last 12 months"
+  activity_header: "PUBLIC ACTIVITY"
+  activity_low: "building in private"
+  footer: "last refresh"

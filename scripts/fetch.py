@@ -79,7 +79,8 @@ def calendar(user: dict) -> dict:
         "total_12mo": cal["totalContributions"],
         "weeks": [
             {"start": w["contributionDays"][0]["date"],
-             "count": sum(d["contributionCount"] for d in w["contributionDays"])}
+             "count": sum(d["contributionCount"] for d in w["contributionDays"]),
+             "days": [d["contributionCount"] for d in w["contributionDays"]]}
             for w in weeks
         ],
     }
@@ -110,6 +111,7 @@ def main() -> None:
         repos.append({
             "name": r["name"],
             "url": r["html_url"],
+            "homepage": (r.get("homepage") or "").strip(),
             "description": r["description"] or "",
             "language": r["language"] or "",
             "stars": r["stargazers_count"],

@@ -1,23 +1,23 @@
 <!-- START:hero -->
 <!-- END:hero -->
 
-<!-- START:now -->
-<!-- END:now -->
-
 <!-- START:about -->
 <!-- END:about -->
 
 <!-- START:links -->
 <!-- END:links -->
 
+<!-- START:building -->
+<!-- END:building -->
+
 <!-- START:work -->
 <!-- END:work -->
 
-<!-- START:toolkit -->
-<!-- END:toolkit -->
+<!-- START:stack -->
+<!-- END:stack -->
 
-<!-- START:signal -->
-<!-- END:signal -->
+<!-- START:activity -->
+<!-- END:activity -->
 
 <!-- START:principles -->
 <!-- END:principles -->

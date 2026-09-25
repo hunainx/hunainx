@@ -1,5 +1,6 @@
 # One block per "Currently building" card, in the same order as profile.yml `now`.
 # Empty fields are hidden, never guessed.
+# glyph: architecture drawing on the card (documents | availability | audit); a design choice, not a claim.
 
 building:
   - id: "01"
@@ -8,15 +9,18 @@ building:
     stack: ["Supabase", "Postgres", "Google Cloud Storage", "Claude Code"]
     status: ""           # hidden until confirmed
     private: true
+    glyph: "documents"
   - id: "02"
     codename: ""
     summary: ""          # empty = profile.yml now[1]
     stack: ["Supabase", "Postgres"]
     status: ""
     private: true
+    glyph: "availability"
   - id: "03"
     codename: ""
     summary: ""          # empty = profile.yml now[2]
     stack: ["Claude Code", "Google Antigravity"]
     status: ""
     private: true
+    glyph: "audit"
