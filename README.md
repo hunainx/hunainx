@@ -95,7 +95,7 @@ I design and build software end to end: web and mobile apps, games, SaaS platfor
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/activity/activity-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/activity/activity-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/activity/activity-mobile-light.svg">
-  <img src="assets/activity/activity-light.svg" alt="building in private. 7 public contributions in the last 12 months.">
+  <img src="assets/activity/activity-light.svg" alt="building in private. 3 public contributions in the last 12 months.">
 </picture>
 </p>
 <!-- END:activity -->
@@ -134,7 +134,7 @@ I design and build software end to end: web and mobile apps, games, SaaS platfor
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-09-26">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-09-25">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>

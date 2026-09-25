@@ -10,7 +10,7 @@
   "language_share": [],
   "repos_with_language_bytes": 0,
   "contributions": {
-    "total_12mo": 7,
+    "total_12mo": 3,
     "weeks": [
       {
         "start": "2025-09-28",
@@ -677,18 +677,17 @@
       },
       {
         "start": "2026-09-20",
-        "count": 5,
+        "count": 1,
         "days": [
           0,
           0,
           0,
           0,
           0,
-          0,
-          5
+          1
         ]
       }
     ]
   },
-  "last_changed": "2026-09-26"
+  "last_changed": "2026-09-25"
 }
