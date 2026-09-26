@@ -1,10 +1,11 @@
-"""Cards for "Currently building" and "Client work": one SVG per card, so each can carry its own
-link. Cards in a row are rendered at the row's tallest height, so the grid stays even.
+""""In motion" cards: one SVG per card, so each can carry its own link. Cards in a row are rendered
+at the row's tallest height, so the grid stays even; the stack chips (and the link) sit on the
+card's floor, so any spare height opens between the copy and the chips, never under them.
 
-Every field is optional; an empty field is not drawn. Building cards show their id, status (where
-set), PRIVATE (where private), an architecture glyph, the verbatim summary, stack chips and, when
-`link` is set, the link. Client cards show the name, status, a PRIVATE CODE tag, a browser glyph,
-summary, chips and the live-site link only where `link` is set.
+Each card's name and description come from its profile.yml `now` line, split verbatim at the
+first ":" or " — ". Everything else comes from data/projects.yml, and an empty field is not drawn:
+type tag, status (none when empty), a quiet confidentiality tag (only when `confidential: true`),
+stack chips and the link.
 """
 from __future__ import annotations
 
@@ -12,89 +13,92 @@ import re
 
 from svgkit import num
 
-from .base import Doc, wrap
+from .base import Doc, balanced, wrap
 
 TIER = {
-    #          width pad sum_fs chip_fs chip_pad
-    "desktop": (414, 20, 15, 12, 9),
-    "mid":     (285, 16, 14, 12, 7),
-    "mobile":  (360, 20, 15, 12, 9),
+    #          width pad desc_fs chip_fs chip_pad name_fs glyph_h chip_pitch
+    "desktop": (414, 20, 15, 12, 9, 20, 72, 30),
+    "mid":     (285, 16, 14, 12, 5.5, 18, 60, 28),
+    "mobile":  (360, 20, 15, 12, 9, 20, 72, 30),
 }
-GLYPH_H = 72
+CHIP_GAP = {"desktop": 6, "mid": 4, "mobile": 6}
 RUNS = [7.3, 8.9, 10.1, 11.3, 9.7, 12.7]
+CONFIDENTIAL = "CONFIDENTIAL"
+SEPARATORS = (":", " — ")
 
 
-def building_cards(profile: dict, projects: dict) -> list[dict]:
+def split_now(text: str) -> tuple[str, str, str]:
+    """(name, separator, description): split at whichever separator comes first. Nothing is added,
+    dropped or reworded; only the whitespace around the split is trimmed."""
+    hits = [(text.find(s), s) for s in SEPARATORS if text.find(s) > 0]
+    if not hits:
+        return text.strip(), "", ""
+    i, sep = min(hits)
+    return text[:i].strip(), sep.strip(), text[i + len(sep):].strip()
+
+
+def motion_cards(profile: dict, projects: dict) -> list[dict]:
     now = [s.strip() for s in profile.get("now") or [] if s.strip()]
     entries = (projects or {}).get("building") or []
     out = []
     for i, text in enumerate(now):
         e = entries[i] if i < len(entries) else {}
-        out.append(_card(e, kind="building", fallback_title=f"{i + 1:02d}", fallback_summary=text,
-                         glyph=(e.get("glyph") or ("documents", "availability", "audit", "pipeline")[i % 4]),
-                         private_label="PRIVATE"))
+        name, sep, desc = split_now(text)
+        link = (e.get("link") or "").strip()
+        out.append({
+            "id": str(e.get("id") or f"{i + 1:02d}"),
+            "type": (e.get("type") or "").strip(),
+            "name": name,
+            "sep": sep,
+            "desc": (e.get("summary") or "").strip() or desc,
+            "stack": [s.strip() for s in e.get("stack") or [] if s and s.strip()],
+            "status": (e.get("status") or "").strip(),
+            "confidential": e.get("confidential") is True,
+            "link": link,
+            "link_text": re.sub(r"^https?://(www\.)?", "", link).rstrip("/"),
+            "glyph": e.get("glyph") or ("documents", "availability", "browser", "challenge")[i % 4],
+        })
     return out
 
 
-def client_cards(projects: dict) -> list[dict]:
-    return [_card(e, kind="client", fallback_title="", fallback_summary="", glyph=e.get("glyph") or "browser",
-                  private_label="PRIVATE CODE")
-            for e in (projects or {}).get("client_work") or [] if (e.get("name") or "").strip()]
-
-
-def _card(e: dict, kind: str, fallback_title: str, fallback_summary: str, glyph: str, private_label: str) -> dict:
-    link = (e.get("link") or "").strip()
-    title = (e.get("name") or "").strip() if kind == "client" else str(e.get("id") or fallback_title)
-    return {
-        "kind": kind,
-        "title": title,
-        "codename": (e.get("codename") or "").strip(),
-        "summary": (e.get("summary") or "").strip() or fallback_summary,
-        "stack": [s.strip() for s in e.get("stack") or [] if s and s.strip()],
-        "status": (e.get("status") or "").strip(),
-        "private": bool(e.get("private")),
-        "private_label": private_label,
-        "link": link,
-        "link_text": re.sub(r"^https?://(www\.)?", "", link).rstrip("/"),
-        "glyph": glyph,
-    }
-
-
 def alt(c: dict) -> str:
-    parts = [f"{c['title']}: {c['summary']}"]
-    if c["codename"]:
-        parts.append(f"Codename {c['codename']}.")
+    head = f"{c['id']}. " + (f"{c['type']}. " if c["type"] else "")
+    body = c["name"] + (f"{' — ' if c['sep'] == '—' else ': '}{c['desc']}" if c["desc"] else "")
+    parts = [head + body]  # the `now` line stays verbatim: no punctuation is added to it
     if c["status"]:
         parts.append(f"Status: {c['status']}.")
-    if c["private"]:
-        parts.append(f"{c['private_label'].capitalize()}.")
+    if c["confidential"]:
+        parts.append("Confidential.")
     if c["stack"]:
         parts.append(f"Stack: {', '.join(c['stack'])}.")
     if c["link_text"]:
         parts.append(f"Link: {c['link_text']}.")
-    return " ".join(parts)
+    return parts[0] + (" · " + " ".join(parts[1:]) if len(parts) > 1 else "")
 
 
 # ------------------------------------------------------------------ layout
 
-def _header(d: Doc, c: dict, inner: float) -> tuple[float, float, float]:
-    """Returns (title width, tags width, extra height when tags wrap below the title)."""
-    title_fs = 20 if c["kind"] == "building" else 17
-    tw = d.width("mono", title_fs, c["title"]) + (d.width("mono", 12, c["codename"], .8) + 12 if c["codename"] else 0)
-    tags = 0.0
-    if c["private"]:
-        tags += d.width("mono", 11, c["private_label"], 1.2) + 36 + 8
+def _tags(d: Doc, c: dict) -> list[tuple[str, float]]:
+    out = []
     if c["status"]:
-        tags += d.width("mono", 12, c["status"], .8) + 18 + 8
-    return tw, tags, (0 if tw + tags + 8 <= inner else 28)
+        out.append(("status", d.width("mono", 12, c["status"], .8) + 18))
+    if c["confidential"]:
+        out.append(("conf", d.width("mono", 11, CONFIDENTIAL, 1.2) + 22))
+    return out
 
 
 def measure(c: dict, tier: str) -> dict:
-    W, pad, sum_fs, chip_fs, chip_pad = TIER[tier]
+    W, pad, desc_fs, chip_fs, chip_pad, name_fs, glyph_h, pitch = TIER[tier]
     d = Doc(W, {})
     inner = W - 2 * pad
-    tw, tags, extra = _header(d, c, inner)
-    lines = wrap(d, "sans", sum_fs, c["summary"], inner) if c["summary"] else []
+    tags = _tags(d, c)
+    idw = d.width("mono", 14, c["id"]) + 16
+    row1 = sum(w for _, w in tags) + 8 * max(len(tags) - 1, 0)
+    # tags ride on the id row; if they don't fit, the last one drops to a second header row
+    split = bool(tags) and idw + row1 > inner and len(tags) > 1
+    extra = 26 if split else 0
+    names = balanced(d, "display", name_fs, c["name"].split(" "), " ", inner) if c["name"] else []
+    lines = wrap(d, "sans", desc_fs, c["desc"], inner) if c["desc"] else []
     rows, cur, rw = [], [], 0.0
     for tool in c["stack"]:
         w = d.width("mono", chip_fs, tool) + 2 * chip_pad
@@ -102,18 +106,20 @@ def measure(c: dict, tier: str) -> dict:
             rows.append(cur)
             cur, rw = [], 0.0
         cur.append((tool, w))
-        rw += w + 6
+        rw += w + CHIP_GAP[tier]
     if cur:
         rows.append(cur)
     top = 58 + extra
-    h = top + GLYPH_H + 26 + len(lines) * (sum_fs + 7) + (len(rows) * 30 + 6 if rows else 0) + (26 if c["link"] else 0) + 12
-    return {"lines": lines, "rows": rows, "extra": extra, "height": h}
+    upper = top + glyph_h + 22 + (22 if c["type"] else 0) + len(names) * (name_fs + 6) + 4 + len(lines) * (desc_fs + 7)
+    lower = (len(rows) * pitch if rows else 0) + (26 if c["link"] else 0) + 14
+    return {"tags": tags, "split": split, "extra": extra, "names": names, "lines": lines, "rows": rows,
+            "upper": upper, "lower": lower, "height": upper + 10 + lower}
 
 
 # ------------------------------------------------------------------ render
 
 def render(t: dict, c: dict, tier: str, width: int, height: float, idx: int = 0) -> tuple[str, int]:
-    W, pad, sum_fs, chip_fs, chip_pad = TIER[tier]
+    W, pad, desc_fs, chip_fs, chip_pad, name_fs, glyph_h, pitch = TIER[tier]
     m = measure(c, tier)
     H = max(height, m["height"])
     d = Doc(W, t)
@@ -123,36 +129,52 @@ def render(t: dict, c: dict, tier: str, width: int, height: float, idx: int = 0)
     d.animate("run", f"animation:run {RUNS[idx % len(RUNS)]}s linear {-idx * 2.1:.1f}s infinite")
     d.keyframes("run", "to{stroke-dashoffset:-1000}")
 
-    # header: title (+ codename) .......... status · PRIVATE  (tags wrap below when narrow)
-    hy = 36
-    title_fs = 20 if c["kind"] == "building" else 17
-    cls = "idx" if c["kind"] == "building" else "ttl"
-    d.add(f'<g class="{cls}">{d.text("mono", title_fs, c["title"], pad, hy + 2)}</g>')
-    if c["codename"]:
-        d.add(d.mono_text(12, c["codename"], pad + d.width("mono", title_fs, c["title"]) + 12, hy - 1, "hl", "start", .8))
-    ty = hy + m["extra"]
-    rx_ = W - pad
-    if c["private"]:
-        tw = d.width("mono", 11, c["private_label"], 1.2)
-        pw = tw + 36
-        d.add(f'<rect class="tag" x="{num(rx_ - pw + .5)}" y="{num(ty - 15.5)}" width="{num(pw - 1)}" height="21" rx="10.5"/>')
-        d.add(d.icon("lock", rx_ - pw + 9, ty - 13, "tic", .72))
-        d.add(d.mono_text(11, c["private_label"], rx_ - 11, ty - 1, "tt", "end", 1.2))
-        rx_ -= pw + 8
-    if c["status"]:
-        sw = d.width("mono", 12, c["status"], .8)
-        live = c["status"].lower() == "live"
-        d.add(f'<circle class="sled{" ok" if live else ""}" cx="{num(rx_ - sw - 10)}" cy="{num(ty - 5)}" r="3.2"/>')
-        d.add(d.mono_text(12, c["status"], rx_, ty - 1, "st", "end", .8))
-        d.animate("sled", "animation:led 2.3s ease-in-out infinite", "led")
+    # header: id .......... status · confidential (the last tag drops a row when narrow)
+    hy = 34
+    d.add(f'<g class="idx">{d.text("mono", 14, c["id"], pad, hy)}</g>')
+    tags = list(m["tags"])
+    rows_ = [tags[:-1], tags[-1:]] if m["split"] else [tags]
+    for r_i, row in enumerate(rows_):
+        rx_ = W - pad
+        ty = hy + r_i * 26
+        for kind, w in reversed(row):
+            if kind == "conf":
+                d.add(f'<rect class="tag" x="{num(rx_ - w + .5)}" y="{num(ty - 14.5)}" width="{num(w - 1)}" height="19" rx="9.5"/>')
+                d.add(d.mono_text(11, CONFIDENTIAL, rx_ - 11, ty - 1, "tt", "end", 1.2))
+            else:
+                sw = w - 18
+                lx, ly = rx_ - sw - 10, ty - 5
+                s = c["status"].lower()
+                if s == "concept":
+                    # a concept is not running: an open, dashed ring that turns slowly, no light
+                    d.add(f'<circle class="scon" cx="{num(lx)}" cy="{num(ly)}" r="3.6" stroke-dasharray="2.2 1.6"/>')
+                    d.animate("scon", f"transform-origin:{num(lx)}px {num(ly)}px;animation:spin 9.7s linear infinite")
+                    d.keyframes("spin", "to{transform:rotate(360deg)}")
+                else:
+                    d.add(f'<circle class="sled{" ok" if s == "live" else ""}" cx="{num(lx)}" cy="{num(ly)}" r="3.2"/>')
+                    d.animate("sled", "animation:led 2.3s ease-in-out infinite", "led")
+                d.add(d.mono_text(12, c["status"], rx_, ty - 1, "st", "end", .8))
+            rx_ -= w + 8
     d.add(f'<path class="hr" d="M{pad} {48.5 + m["extra"]}H{W - pad}"/>')
 
     top = 58 + m["extra"]
-    d.add(GLYPHS[c["glyph"]](d, t, pad, top, inner, GLYPH_H))
+    d.add(GLYPHS[c["glyph"]](d, t, pad, top, inner, glyph_h))
 
-    sy = top + GLYPH_H + 26
-    d.add("".join(d.body_text(sum_fs, ln, pad, sy + j * (sum_fs + 7), "sum") for j, ln in enumerate(m["lines"])))
-    cyy = sy + len(m["lines"]) * (sum_fs + 7) + 2
+    y = top + glyph_h + 22
+    if c["type"]:
+        y += 4
+        d.add(d.mono_text(11, c["type"].upper(), pad, y, "kind", "start", 1.6))
+        y += 18
+    for j, ln in enumerate(m["names"]):
+        y += name_fs + (0 if j == 0 else 6)
+        d.add(f'<g class="nm">{d.text("display", name_fs, ln, pad, y)}</g>')
+    y += 6
+    for j, ln in enumerate(m["lines"]):
+        y += desc_fs + (4 if j == 0 else 7)
+        d.add(d.body_text(desc_fs, ln, pad, y, "sum"))
+
+    # floor: chips, then the link
+    cyy = H - m["lower"] + 2
     n = 0
     for row in m["rows"]:
         cx = pad
@@ -160,9 +182,9 @@ def render(t: dict, c: dict, tier: str, width: int, height: float, idx: int = 0)
             d.add(f'<g class="c{n}"><rect class="tchip" x="{num(cx + .5)}" y="{num(cyy + .5)}" width="{num(w - 1)}" height="23" rx="11.5"/>'
                   + d.mono_text(chip_fs, tool, cx + chip_pad, cyy + 16, "ttool") + "</g>")
             d.animate(f"c{n}", f"animation:fade .5s ease-out {.4 + n * .1:.2f}s backwards", "fade")
-            cx += w + 6
+            cx += w + CHIP_GAP[tier]
             n += 1
-        cyy += 30
+        cyy += pitch
     if c["link"]:
         ly = H - 22
         # the arrow leads, so its spacing never depends on the system font's width
@@ -173,14 +195,14 @@ def render(t: dict, c: dict, tier: str, width: int, height: float, idx: int = 0)
 
     ok = t.get("success", t["accent"])
     d.rule(f".panel{{fill:{t['surface']};stroke:{t['line']}}}.run{{fill:none;stroke:{t['accent']};stroke-width:1.5;stroke-linecap:round;stroke-opacity:.9}}"
-           f".idx{{fill:{t['accent_text']}}}.ttl{{fill:{t['text']}}}.hl,.st,.tt,.ttool{{fill:{t['muted']}}}.hr{{stroke:{t['line']}}}"
-           f".sled{{fill:{t['accent']}}}.sled.ok{{fill:{ok}}}"
-           f".tag,.tchip{{fill:none;stroke:{t['line_strong']}}}.tic{{fill:none;stroke:{t['muted']};stroke-width:1.6;stroke-linecap:round}}"
+           f".idx,.kind{{fill:{t['accent_text']}}}.nm{{fill:{t['text']}}}.st,.tt,.ttool{{fill:{t['muted']}}}.hr{{stroke:{t['line']}}}"
+           f".sled{{fill:{t['accent']}}}.sled.ok{{fill:{ok}}}.scon{{fill:none;stroke:{t['accent2']};stroke-width:1.4}}"
+           f".tag{{fill:none;stroke:{t['line_strong']};stroke-dasharray:3 2}}.tchip{{fill:none;stroke:{t['line_strong']}}}"
            f".wire{{stroke:{t['line_strong']};fill:none}}.node{{fill:{t['bg']};stroke:{t['line_strong']}}}"
            f".ic{{fill:none;stroke:{t['text']};stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}}"
-           f".dat{{fill:{t['accent']}}}.ring{{fill:none;stroke:{t['accent']}}}.sum{{fill:{t['text']}}}.lnk,.arr{{fill:{t['accent_text']}}}"
+           f".dat{{fill:{t['accent']}}}.ring{{fill:none;stroke:{t['accent']}}}.sum{{fill:{t['muted']}}}.lnk,.arr{{fill:{t['accent_text']}}}"
            + GLYPH_CSS[c["glyph"]](t))
-    return d.render(H, c["title"], alt(c)), d.anim
+    return d.render(H, c["name"] or c["id"], alt(c)), d.anim
 
 
 # ------------------------------------------------------------------ glyphs
@@ -236,43 +258,6 @@ def g_availability(d: Doc, t: dict, x, y, w, h) -> str:
     return "".join(p)
 
 
-def g_audit(d: Doc, t: dict, x, y, w, h) -> str:
-    """code under a scanner; findings ranked by severity (bigger marker = higher severity)"""
-    p = []
-    widths = [.62, .44, .78, .36, .56]
-    lw = w - 58
-    for j, fr in enumerate(widths):
-        p.append(f'<rect class="code" x="{num(x)}" y="{num(y + 10 + j * 11)}" width="{num(lw * fr)}" height="5" rx="2.5"/>')
-    d.defs.append(f'<clipPath id="cl"><rect x="{num(x - 2)}" y="{num(y + 4)}" width="{num(lw + 4)}" height="62"/></clipPath>')
-    p.append(f'<g clip-path="url(#cl)"><g class="sc"><rect class="scanb" x="{num(x - 2)}" y="{num(y - 14)}" width="{num(lw + 4)}" height="14"/>'
-             f'<rect class="scanl" x="{num(x - 2)}" y="{num(y - 1)}" width="{num(lw + 4)}" height="1.2"/></g></g>')
-    d.animate("sc", "animation:ascan 4.1s cubic-bezier(.45,0,.55,1) infinite")
-    d.keyframes("ascan", "0%{transform:translateY(0)}70%,100%{transform:translateY(70px)}")
-    fx = x + lw + 22
-    for j, (line, size) in enumerate([(2, 10), (0, 7), (4, 5)]):
-        yy = y + 12.5 + line * 11
-        p.append(f'<path class="wire" d="M{num(x + lw * widths[line] + 6)} {num(yy)}H{num(fx - size / 2 - 3)}" stroke-dasharray="2 3"/>')
-        p.append(f'<rect class="sev v{j}" x="{num(fx - size / 2)}" y="{num(yy - size / 2)}" width="{size}" height="{size}" rx="1.5"/>')
-        d.animate(f"v{j}", f"animation:led {2.3 + j * 1.1:.1f}s ease-in-out {j * .5:.1f}s infinite", "led")
-    return "".join(p)
-
-
-def g_pipeline(d: Doc, t: dict, x, y, w, h) -> str:
-    """spec -> build -> check -> ship, with a signal lighting each stage in turn"""
-    cy, p = y + h / 2, []
-    icons = ["spec", "build", "check", "ship"]
-    xs = [x + 13 + i * (w - 26) / 3 for i in range(4)]
-    p.append(f'<path class="wire" d="' + "".join(f"M{num(xs[i] + 14)} {num(cy)}H{num(xs[i + 1] - 14)}" for i in range(3)) + '"/>')
-    period = 4.9
-    for i, (ic, nx) in enumerate(zip(icons, xs)):
-        p.append(f'<rect class="node" x="{num(nx - 13)}" y="{num(cy - 13)}" width="26" height="26" rx="6"/>' + d.icon(ic, nx - 8, cy - 8))
-        p.append(f'<rect class="ring p{i}" x="{num(nx - 13)}" y="{num(cy - 13)}" width="26" height="26" rx="6"/>')
-        d.animate(f"p{i}", f"opacity:0;animation:stage {period}s ease-out {period * i / 4:.2f}s infinite")
-    d.keyframes("stage", "0%{opacity:1}30%,100%{opacity:0}")
-    p.append(_flow(d, f"M{num(xs[0] + 14)} {num(cy)}H{num(xs[3] - 14)}", 1, period, "q"))
-    return "".join(p)
-
-
 def g_browser(d: Doc, t: dict, x, y, w, h) -> str:
     """a live site: browser window with content scrolling (scroll-driven motion)"""
     p = [f'<rect class="win" x="{num(x + .5)}" y="{num(y + 4.5)}" width="{num(w - 1)}" height="{h - 9}" rx="6"/>']
@@ -290,13 +275,43 @@ def g_browser(d: Doc, t: dict, x, y, w, h) -> str:
     return "".join(p)
 
 
+def g_challenge(d: Doc, t: dict, x, y, w, h) -> str:
+    """validation: an idea is pushed through three narrowing gates; one candidate is stopped at a
+    gate, one survives, smaller, into the smallest viable version"""
+    cy, p = y + h / 2, []
+    a, b = x + 13, x + w - 13
+    gates = [a + 40 + k * (b - a - 80) / 2 for k in range(3)]
+    gaps = [30, 20, 11]
+    p.append(f'<path class="wire" stroke-dasharray="2 4" d="M{num(a + 13)} {num(cy)}H{num(b - 13)}"/>')
+    for k, (gx, gap) in enumerate(zip(gates, gaps)):
+        p.append(f'<g class="gate e{k}"><rect x="{num(gx - 1.5)}" y="{num(y + 8)}" width="3" height="{num(cy - gap / 2 - y - 8)}" rx="1.5"/>'
+                 f'<rect x="{num(gx - 1.5)}" y="{num(cy + gap / 2)}" width="3" height="{num(y + h - 8 - cy - gap / 2)}" rx="1.5"/></g>')
+        d.animate(f"e{k}", f"animation:led 5.3s ease-in-out {1 + k * .6:.1f}s infinite", "led")
+    p.append(f'<circle class="node" cx="{num(a)}" cy="{num(cy)}" r="12"/>' + d.icon("challenge", a - 8, cy - 8))
+    p.append(f'<rect class="node" x="{num(b - 12)}" y="{num(cy - 12)}" width="24" height="24" rx="5"/>' + d.icon("tick", b - 8, cy - 8))
+    p.append(f'<rect class="ring" x="{num(b - 12)}" y="{num(cy - 12)}" width="24" height="24" rx="5"/>')
+    d.animate("ring", f"transform-origin:{num(b)}px {num(cy)}px;animation:ping 5.3s ease-out 3.4s infinite")
+    d.keyframes("ping", "0%{transform:scale(1);opacity:.8}60%,100%{transform:scale(1.5);opacity:0}")
+    # the survivor shrinks as it passes each gate; the rejected candidate drops out at the second
+    p.append('<circle class="dat pass" r="3"/>')
+    d.animate("pass", f"offset-path:path('M{num(a + 13)} {num(cy)}H{num(b - 14)}');offset-distance:62%;animation:vpass 5.3s cubic-bezier(.4,0,.4,1) 1s infinite")
+    d.keyframes("vpass", "0%{offset-distance:0%;transform:scale(1.9);opacity:0}8%{opacity:1}"
+                         "90%{offset-distance:100%;transform:scale(.8);opacity:1}100%{offset-distance:100%;transform:scale(.8);opacity:0}")
+    drop = f"M{num(a + 13)} {num(cy)}H{num(gates[1] - 7)}c4 0 5 3 5 {num(h / 2 - 12)}"
+    p.append('<circle class="rej" r="2.6"/>')
+    d.animate("rej", f"offset-path:path('{drop}');opacity:0;animation:vrej 5.3s cubic-bezier(.5,0,.6,1) 3.1s infinite")
+    d.keyframes("vrej", "0%{offset-distance:0%;opacity:0}8%{opacity:.9}70%{opacity:.9}100%{offset-distance:100%;opacity:0}")
+    return "".join(p)
+
+
 GLYPH_CSS = {
     "documents": lambda t: f".doc{{fill:{t['bg']};stroke:{t['line_strong']}}}.docl{{stroke:{t['faint']}}}",
     "availability": lambda t: f".cell{{fill:{t['line']}}}.hot{{fill:{t['accent']}}}",
-    "audit": lambda t: f".code{{fill:{t['line']}}}.scanb{{fill:{t['accent2']};fill-opacity:.16}}.scanl{{fill:{t['accent2']}}}.sev{{fill:{t['accent']}}}",
-    "pipeline": lambda t: "",
     "browser": lambda t: f".win{{fill:{t['bg']};stroke:{t['line_strong']}}}.blk{{fill:{t['line']}}}.hotb{{fill:{t['accent']};fill-opacity:.8}}.dotc{{fill:{t['faint']}}}",
+    "challenge": lambda t: f".gate{{fill:{t['muted']};fill-opacity:.7}}.rej{{fill:{t['accent2']}}}",
 }
+GLYPH_CSS["audit"] = GLYPH_CSS["challenge"]
 
-GLYPHS = {"documents": g_documents, "availability": g_availability, "audit": g_audit,
-          "pipeline": g_pipeline, "browser": g_browser}
+# projects.yml names card 04's drawing "audit"; it is drawn as the validation (challenge) glyph.
+GLYPHS = {"documents": g_documents, "availability": g_availability, "browser": g_browser,
+          "challenge": g_challenge, "audit": g_challenge}

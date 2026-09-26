@@ -10,21 +10,8 @@
   "language_share": [],
   "repos_with_language_bytes": 0,
   "contributions": {
-    "total_12mo": 3,
+    "total_12mo": 10,
     "weeks": [
-      {
-        "start": "2025-09-28",
-        "count": 0,
-        "days": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
       {
         "start": "2025-10-05",
         "count": 0,
@@ -677,17 +664,36 @@
       },
       {
         "start": "2026-09-20",
-        "count": 1,
+        "count": 8,
         "days": [
           0,
           0,
           0,
           0,
           0,
-          1
+          0,
+          8
+        ]
+      },
+      {
+        "start": "2026-09-27",
+        "count": 0,
+        "days": [
+          0
         ]
       }
     ]
   },
-  "last_changed": "2026-09-25"
+  "signal": {
+    "mode": "public",
+    "contributions_12mo": 10,
+    "repos_contributed_12mo": 2,
+    "sources": {
+      "contributions_12mo": "public: GraphQL contributionCalendar (owner token; no private repositories in the window)",
+      "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
+      "eligible_public_repos": "public: REST /users/{login}/repos (non-fork, non-archived, excluding the profile repo)",
+      "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
+    }
+  },
+  "last_changed": "2026-09-27"
 }

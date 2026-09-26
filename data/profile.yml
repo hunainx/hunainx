@@ -1,64 +1,79 @@
 # Profile content. Edit and push; the workflow rebuilds the README.
 # Empty fields are omitted from the profile.
+# Positioning rule: broad at the top (range), technical depth underneath (evidence).
 
 name: "Hunain Ahmed"
 
-# Hero subtitle (rendered uppercase).
-role: "AI-native systems builder"
+# Hero subtitle (rendered uppercase). The broad positioning.
+role: "AI · Software · Products"
 
-positioning: "I turn ambiguous problems into specified, architected, audited software, with AI agents doing the building."
+# Hero tagline.
+tagline: "Turning ambiguous problems into products, intelligent systems and working software."
 
-focus: ["Evidence & document intelligence", "AI-agent systems", "Product architecture", "Web products"]
+# Hero depth line: small mono line under the tagline. The technical proof beneath the range.
+depth: ["MCP", "Cloud Run", "PostgreSQL + pgvector", "Supabase", "Retrieval", "Interactive web", "Automation"]
 
-tagline: "From ambiguous problem to verified system."
+positioning: "I turn ambiguous problems into products, intelligent systems and working software."
 
 about: >-
-  I turn ambiguous problems into structured, working systems.
+  I take ambiguous problems and turn them into structured ideas, products and
+  working systems.
 
-  Most of my work happens before the first line of code: breaking the problem
-  down, researching the domain, and stress-testing whether the idea should be
-  built at all. What survives becomes a precise specification and an
-  architecture. AI coding agents carry the implementation under close
-  direction, and everything they produce is audited adversarially before it
-  ships.
+  I think before I build. I research the domain, challenge the original idea,
+  and define what the product should actually be. Then I design the
+  architecture, specify it precisely, and lead the implementation. AI agents
+  accelerate the build. I set the direction, review everything they produce,
+  audit it adversarially, and make the final engineering and product calls.
 
-  Right now that means evidence-intelligence infrastructure: pipelines that turn
-  large, unstructured archives of documents, email, attachments and voice
-  recordings into searchable evidence through OCR, transcription and vector
-  retrieval, exposed to AI through MCP servers on Google Cloud. Alongside it are
-  production web products, product concepts taken through adversarial
-  validation, and the brand and creative systems around them.
+  That method travels. This year it has taken me from evidence-intelligence
+  infrastructure for legal investigations, with OCR, transcription and vector
+  retrieval over PostgreSQL and pgvector served to AI through MCP on Google
+  Cloud, to interactive websites for businesses, a booking platform, a hardware
+  product concept taken through adversarial validation, and the automation and
+  creative systems in between.
 
   The domains change. The method doesn't.
 
-# "Currently building" cards, in order. Details per card live in data/projects.yml.
+# Secondary line, rendered small and muted directly under About. No employer, no system name.
+current: "Currently an AI Specialist, building evidence-intelligence infrastructure."
+
+# "In motion" cards, in order. Details per card live in data/projects.yml.
 now:
-  - "Evidence intelligence platform: ingestion, OCR, transcription and vector retrieval for litigation-scale document archives, served to Claude through per-case MCP servers on Cloud Run"
-  - "Airo Rentals booking platform: live availability, scheduling and an admin console on Supabase"
-  - "Adversarial audit practice: report-only reviews of AI-built codebases, every finding ranked P0 to P3"
-  - "This profile: a spec-first, truth-gated, self-updating build. The method, in public."
+  - "Evidence intelligence platform: Ingestion, OCR, transcription and vector retrieval for litigation-scale document archives, served to AI through MCP servers on Cloud Run"
+  - "Airo Rentals booking platform: Live availability, scheduling and an admin console, built on the self-drive rental site"
+  - "Rumer Groups: Corporate website, specified in a 25,000-word PRD, built with AI-accelerated implementation and audited P0 to P3 before launch"
+  - "AURA — A hardware product concept taken through adversarial validation covering market, feasibility, regulation and the smallest viable version"
 
 # "How I work": the 8-stage method. Rendered as an animated diagram AND as Markdown text.
 method:
-  - { stage: "Frame",         line: "Break the problem down until the real one is visible." }
-  - { stage: "Research",      line: "Learn the domain before designing for it." }
-  - { stage: "Challenge",     line: "Should this exist? Where does the idea fail? What is the smallest version that proves it?" }
-  - { stage: "Specify",       line: "Write the product down precisely enough that an agent can't misread it." }
-  - { stage: "Architect",     line: "Data model, infrastructure and boundaries decided before code." }
-  - { stage: "Orchestrate",   line: "AI agents as the build team: scoped, parallel, supervised." }
-  - { stage: "Audit",         line: "Read the output as an adversary. Severity-ranked, checked against the spec, never taken on trust." }
+  - { stage: "Frame",          line: "Break the problem down until the real one is visible." }
+  - { stage: "Research",       line: "Learn the domain before designing for it." }
+  - { stage: "Challenge",      line: "Should this exist? Where does the idea fail? What is the smallest version that proves it?" }
+  - { stage: "Specify",        line: "Write the product down precisely enough that nothing is left to interpretation." }
+  - { stage: "Architect",      line: "Data model, infrastructure and boundaries decided before code." }
+  - { stage: "Orchestrate",    line: "Direct AI agents as a force multiplier: scoped, parallel, and reviewed before anything is accepted." }
+  - { stage: "Audit",          line: "Read the output as an adversary. Severity-ranked, checked against the spec, never taken on trust." }
   - { stage: "Ship & iterate", line: "Deploy, observe, and feed what breaks back into the spec." }
 
 # Closing line under the method, and the hero ticker source.
 principles:
   - "Evidence over assertion. If a claim cannot be verified, it does not ship."
 
+# Proof line under the method, linking to this repository.
+proof:
+  text: "This profile is built with the same method: specification, truth-gated build, automated checks."
+  link: "https://github.com/hunainx/hunainx"
+
+# Technical depth (left side of the stack map).
 stack:
-  AI & agents:      ["Claude", "Claude Code", "Claude Desktop", "MCP", "Google Antigravity", "Gemini"]
-  Cloud:            ["Google Cloud Run", "Google Cloud Storage"]
-  Data & retrieval: ["Supabase", "Postgres", "pgvector"]
-  Interactive web:  ["GSAP + ScrollTrigger", "WebGL2"]
-  Delivery:         ["GitHub Actions", "Netlify"]
+  AI toolkit:            ["Claude", "Claude Code", "Claude Desktop", "MCP", "Google Antigravity", "Gemini"]
+  Cloud:                 ["Google Cloud Run", "Google Cloud Storage"]
+  Data & retrieval:      ["PostgreSQL", "pgvector", "Supabase", "OCR", "Transcription"]
+  Interactive web:       ["GSAP + ScrollTrigger", "WebGL2"]
+  Automation & delivery: ["GitHub Actions", "Netlify"]
+
+# Strategic range (right side of the stack map).
+focus: ["AI infrastructure", "Products & SaaS", "Interactive web", "Data & retrieval", "Automation", "Product strategy", "Creative technology"]
 
 # Public repos to feature. Empty = auto-pick recent public, non-fork repos.
 featured_repos: []
@@ -74,5 +89,5 @@ links:
 # Visual accent: ember | signal | ion
 accent: "ember"
 
-# Show private contribution count (no details) when a PROFILE_READ_TOKEN secret exists.
+# Show the private contribution COUNT (no repo names) when a PROFILE_READ_TOKEN secret exists.
 show_private_contribution_count: true

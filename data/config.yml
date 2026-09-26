@@ -5,8 +5,15 @@ login: hunainx
 # Section visibility thresholds (PRD §6). A section below its threshold is omitted.
 thresholds:
   stats_min_public_repos: 1        # eligible public repos (non-fork, non-archived, not the profile repo)
-  activity_min_contributions: 10   # public contributions in the last 12 months
-  languages_min_repos: 1           # eligible public repos that report language bytes
+
+# Shipping signal: each count is shown only at or above its threshold, and only when the API
+# returned it. Nothing below a threshold is replaced by another number. The contributions count
+# gates the whole panel: below its threshold, the section is hidden.
+signal:
+  contributions_min: 50            # contributions in the last 12 months
+  repos_contributed_min: 2         # repositories contributed to in the last 12 months
+  public_repos_min: 1              # eligible public repos
+  stars_min: 1                     # stars earned on eligible public repos
 
 selected_work:
   max_cards: 4                     # auto-pick when profile.yml featured_repos is empty
@@ -21,10 +28,10 @@ tiers:
   mobile:  { width: 360 }
 # Components that get the 600px mid tier (others use desktop art from 1012px). All full-width
 # components share it so their edges line up at every width; work cards (410px) never scale.
-mid_tier: [hero, building, stack, activity, method, separator]
+mid_tier: [hero, motion, stack, signal, method, separator]
 
 hero:
-  agents_category: "AI & agents"        # profile.yml stack category listed beside the agent orbit
+  agents_category: "AI toolkit"         # profile.yml stack category listed top-right; its signals feed BUILD
   corners:                              # true values only
     top_left: "MYSURU, IN"
     top_right: "UTC+5:30"
@@ -33,12 +40,11 @@ hero:
 
 # Terminal label + native heading for each section.
 sections:
-  building:   { command: "./building --now", heading: "Currently building" }
-  clients:    { command: "ls ./clients",     heading: "Client work" }
-  work:       { command: "ls ./work",        heading: "Selected work" }
-  stack:      { command: "tree ./stack",     heading: "Stack" }
-  activity:   { command: "./activity",       heading: "Activity" }
-  principles: { command: "cat ./method",     heading: "How I work" }
+  motion:     { command: "./in-motion",    heading: "In motion" }
+  work:       { command: "ls ./work",      heading: "Selected work" }
+  stack:      { command: "tree ./stack",   heading: "Stack & range" }
+  signal:     { command: "./signal",       heading: "Shipping signal" }
+  principles: { command: "cat ./method",   heading: "How I work" }
 
 # Colour tokens (PRD §7). `faint` is decorative only: it fails 4.5:1 as text.
 tokens:
@@ -86,8 +92,10 @@ labels:
   public_repos: "Public repos"
   stars: "Stars earned"
   contributions: "Contributions (12 mo)"
-  private_contributions: "Private contributions (12 mo)"
-  activity_caption: "public contributions in the last 12 months"
-  activity_header: "PUBLIC ACTIVITY"
-  activity_low: "building in private"
+  repos_contributed: "Repositories contributed to (12 mo)"
+  signal_header: "SHIPPING SIGNAL"
+  signal_public: "public GitHub data"
+  signal_token: "GitHub data, read-only token"
+  stack_left: "DEPTH"
+  stack_right: "RANGE"
   footer: "last refresh"

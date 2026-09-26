@@ -1,47 +1,39 @@
-# One block per "Currently building" card, in the same order as profile.yml `now`.
+# One block per "In motion" card, in the same order as profile.yml `now`.
 # Empty fields are hidden, never guessed.
-# glyph: architecture drawing on the card (documents | availability | audit | pipeline); a design choice, not a claim.
+# type: category tag shown on the card (shows range). stack: technical chips (shows depth).
+# confidential: quiet tag, only where the work genuinely can't be disclosed.
+# glyph: architecture drawing on the card; a design choice, not a claim.
 
 building:
   - id: "01"
-    codename: ""
+    type: "AI infrastructure"
     summary: ""          # empty = profile.yml now[0]
-    stack: ["Google Cloud Run", "Google Cloud Storage", "Supabase", "Postgres", "pgvector", "MCP", "Claude"]
+    stack: ["Google Cloud Run", "Google Cloud Storage", "Supabase", "PostgreSQL", "pgvector", "MCP", "Claude"]
     status: "In active use"
-    private: true
+    confidential: true
+    link: ""
     glyph: "documents"
   - id: "02"
-    codename: ""
+    type: "Product"
     summary: ""          # empty = profile.yml now[1]
-    stack: ["Supabase", "Postgres"]
+    stack: ["Supabase", "PostgreSQL", "GSAP"]
     status: ""
-    private: true
+    confidential: false
+    link: ""
     glyph: "availability"
   - id: "03"
-    codename: ""
+    type: "Interactive web"
     summary: ""          # empty = profile.yml now[2]
-    stack: ["Claude Code", "Google Antigravity"]
-    status: ""
-    private: true
-    glyph: "audit"
-  - id: "04"
-    codename: ""
-    summary: ""          # empty = profile.yml now[3]
-    stack: ["Python", "SVG", "GitHub Actions"]
-    status: "Live"
-    private: false
-    link: "https://github.com/hunainx/hunainx"
-    glyph: "pipeline"    # new glyph: spec -> build -> check -> ship
-
-# Client work with a public name. The code stays private: no repo links.
-client_work:
-  - name: "Rumer Groups"
-    summary: "Corporate website for a Mysuru holding company, specified in a 25,000-word PRD, built with AI agents and adversarially audited (P0 to P3) before launch."
     stack: ["GSAP + ScrollTrigger", "WebGL2", "Netlify"]
+    status: "Live"
+    confidential: false
     link: "https://rumergroups.com"
-    private: true
-  - name: "Airo Rentals"
-    summary: "Self-drive rental website with scroll-driven motion. Next phase: a Supabase booking system with live availability, calendar and admin."
-    stack: ["GSAP", "Supabase"]
-    link: ""             # no live site yet
-    private: true
+    glyph: "browser"
+  - id: "04"
+    type: "Product strategy"
+    summary: ""          # empty = profile.yml now[3]
+    stack: ["Market", "Feasibility", "Regulation", "MVP"]
+    status: "Concept"
+    confidential: false
+    link: ""
+    glyph: "audit"       # validation drawing; reuse or restyle as a "challenge" glyph

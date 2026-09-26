@@ -1,66 +1,80 @@
-"""Hero: frame + corner meta, name, role, tagline, agents cluster, pipeline diagram, log ticker.
+"""Hero: frame + corner meta, name, role, tagline, depth line, pipeline diagram, AI toolkit, log ticker.
 
-Copy comes verbatim from profile.yml: name and role (displayed uppercase), tagline, the first
-sentence of each principle (ticker) and the tools of the stack category named in
-config `hero.agents_category` (agent cluster labels). Stage names are the owner's process.
+Copy comes verbatim from profile.yml: name and role (displayed uppercase), tagline, `depth`
+(joined with " · "), the first sentence of each principle (ticker) and the tools of the stack
+category named in config `hero.agents_category` (the toolkit list). Stage names are the owner's
+process. The toolkit is not a stage: faint signal lines carry it into BUILD, the stage it
+multiplies.
 """
 from __future__ import annotations
 
-import math
 import re
 
-from svgkit import esc_text, num
+from svgkit import num
 
-from .base import Doc, hgrad, lead, radial_glow, split_tokens
+from .base import Doc, balanced, hgrad, lead, radial_glow
 
-STAGES = ["challenge", "spec", "architect", "agents", "audit", "ship"]
-LOOP = ("audit", "agents")  # audit findings go back to the agents (the build team)
+STAGES = ["challenge", "spec", "architect", "build", "audit", "ship"]
+LOOP = ("audit", "build")  # audit findings go back into the build
+FEED = "build"             # the stage the AI toolkit feeds
 LAYOUT = {
-    #          pad  name  role  tag  meta tick  chipw chiph label_fs
-    "desktop": (32, 46, 15, 17, 12, 15, 56, 46, 13),
-    "mid":     (24, 40, 14, 16, 12, 14, 52, 44, 12),
-    "mobile":  (18, 32, 13, 16, 13, 13, 50, 44, 13),
+    #          pad  name  role  tag  meta tick  chipw chiph label_fs depth_fs tool_fs
+    "desktop": (32, 46, 15, 17, 12, 15, 56, 46, 13, 12, 12),
+    "mid":     (24, 40, 14, 16, 12, 14, 52, 44, 12, 12, 12),
+    "mobile":  (18, 32, 13, 16, 13, 13, 50, 44, 13, 13, 13),
 }
+SIGNAL_PERIODS = [4.3, 5.9, 3.7]
 
 
 def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[str, int]:
     W = width
-    pad, name_fs, role_fs, tag_fs, meta_fs, tick_fs, cw, ch, lab_fs = LAYOUT[tier]
+    pad, name_fs, role_fs, tag_fs, meta_fs, tick_fs, cw, ch, lab_fs, dep_fs, tool_fs = LAYOUT[tier]
     d = Doc(W, t)
     name = profile["name"].strip()
     role = (profile.get("role") or "").strip()
     tagline = (profile.get("tagline") or "").strip()
+    depth = [s.strip() for s in profile.get("depth") or [] if s and s.strip()]
     ticker = [lead(p) for p in profile.get("principles") or [] if p.strip()]
-    agents = [a for a in (profile.get("stack") or {}).get(cfg["hero"]["agents_category"], []) if a.strip()]
+    kit_name = cfg["hero"]["agents_category"]
+    kit = [a.strip() for a in (profile.get("stack") or {}).get(kit_name, []) if a and a.strip()]
     meta = cfg["hero"]["corners"]
-    desktop = tier == "desktop"
-    x0 = pad + (8 if tier != "mobile" else 0)
-    text_w = W - 2 * x0
+    desktop, mobile = tier == "desktop", tier == "mobile"
+    x0 = pad + (8 if not mobile else 0)
 
     # ---------------- vertical layout
-    top_g = 36 if tier != "mobile" else 34
+    top_g = 36 if not mobile else 34
     name_y = top_g + (66 if desktop else 58 if tier == "mid" else 52)
+    # the text column stops short of BUILD on wide tiers: the toolkit's signal lines own the right side
+    pts0 = stage_points(tier, W, x0, cw, ch, 0)
+    text_w = (pts0[STAGES.index(FEED)][0] - 16 - x0) if not mobile else W - 2 * x0
     y = name_y + (36 if desktop else 32)
     role_tr = 3.2 if desktop else 2.4 if tier == "mid" else 1.8
-    role_lines = split_tokens(d, "mono", role_fs, [p.strip() for p in role.upper().split("·")], " · ",
-                              text_w - (0 if desktop else 70), role_tr) if role else []
+    role_lines = balanced(d, "mono", role_fs, [p.strip() for p in role.upper().split("·")], " · ", text_w, role_tr) if role else []
     role_ys = []
     for _ in role_lines:
         role_ys.append(y)
         y += role_fs + 7
     y += 10
-    tag_tokens = []
-    for sentence in re.split(r"(?<=[.!?]) ", tagline) if tagline else []:
-        tag_tokens += sentence.split(" ") if d.width("sans", tag_fs, sentence) > text_w else [sentence]
-    tag_lines = split_tokens(d, "sans", tag_fs, tag_tokens, " ", text_w, 0)
+    tag_lines = balanced(d, "sans", tag_fs, tagline.split(" "), " ", text_w) if tagline else []
     tag_ys = []
     for _ in tag_lines:
         tag_ys.append(y)
         y += tag_fs + 7
+    # depth: the technical line under the tagline, whole items per line (never split inside one)
+    dep_lines = balanced(d, "mono", dep_fs, depth, " · ", text_w) if depth else []
+    dep_ys = []
+    if dep_lines:
+        y += 4
+        for _ in dep_lines:
+            dep_ys.append(y)
+            y += dep_fs + 8
     cy = y + (72 if desktop else 70)
     pts = stage_points(tier, W, x0, cw, ch, cy)
     y = max(p[1] for p in pts) + ch / 2 + 44
-    tick_y = y + (14 if tier == "mobile" else 8)
+    kit_top = y  # mobile: the toolkit block sits under the pipeline
+    if mobile and kit:
+        y += 34 + 20 + 20 + 2 * (tool_fs + 6) + 34
+    tick_y = y + (14 if mobile else 8)
     bot_g = tick_y + 24
     H = bot_g + 36
 
@@ -77,7 +91,7 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
     d.animate("glow", f"transform-origin:{W / 2}px {num(cy)}px;animation:glowb 9.7s ease-in-out infinite", "glowb")
 
     # ---------------- frame guides (draw in) + crosshairs
-    vx1, vx2 = (pad - 8, W - pad + 8) if tier != "mobile" else (8, W - 8)
+    vx1, vx2 = (pad - 8, W - pad + 8) if not mobile else (8, W - 8)
     d.add(f'<path class="guide g0" pathLength="100" stroke-dasharray="100" d="M0 {top_g + .5}H{W}M0 {num(bot_g + .5)}H{W}"/>')
     d.add(f'<path class="guide g1" pathLength="100" stroke-dasharray="100" d="M{vx1 + .5} 10V{num(H - 10)}M{vx2 - .5} 10V{num(H - 10)}"/>')
     d.animate("g0", "animation:draw 1.2s cubic-bezier(.6,0,.2,1) backwards", "draw")
@@ -117,17 +131,21 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
         d.add(g)
         t_role += .05
 
-    # ---------------- tagline: rises in
-    if tag_lines:
-        d.add('<g class="tag rise">' + "".join(d.text("sans", tag_fs, ln, x0, ty) for ln, ty in zip(tag_lines, tag_ys)) + "</g>")
+    # ---------------- tagline + depth: rise in together
+    if tag_lines or dep_lines:
+        d.add('<g class="rise">'
+              + "".join(f'<g class="tag">{d.text("sans", tag_fs, ln, x0, ty)}</g>' for ln, ty in zip(tag_lines, tag_ys))
+              + "".join(d.mono_text(dep_fs, ln, x0, dy, "dep", "start", .3) for ln, dy in zip(dep_lines, dep_ys))
+              + "</g>")
         d.animate("rise", f"animation:rise .9s cubic-bezier(.2,.7,.2,1) {max(t_role - .5, 1.4):.2f}s backwards", "rise")
-
-    # ---------------- agents cluster (top-right quadrant)
-    agents_cluster(d, t, tier, W, x0, top_g, name_y, agents, x0 + nw, name_fs)
 
     # ---------------- pipeline diagram
     d.add('<g class="diag">' + diagram(d, t, tier, pts, cw, ch, lab_fs) + "</g>")
     d.animate("diag", "animation:rise .9s cubic-bezier(.2,.7,.2,1) 1.7s backwards", "rise")
+
+    # ---------------- AI toolkit + signal lines into BUILD
+    if kit:
+        toolkit(d, tier, W, x0, name_y, name_fs, kit_name.upper(), kit, tool_fs, pts[STAGES.index(FEED)], ch, lab_fs, kit_top)
 
     # ---------------- log ticker: first sentence of each principle, typed then faded
     if ticker:
@@ -135,62 +153,81 @@ def render(t: dict, profile: dict, cfg: dict, tier: str, width: int) -> tuple[st
 
     d.rule(f".guide{{stroke:{t['line_strong']};fill:none}}.cross{{stroke:{t['faint']};fill:none}}"
            f".meta,.mt{{fill:{t['muted']}}}.gl{{fill:none;stroke:{t['muted']};stroke-width:1.3}}"
-           f".name{{fill:{t['text']}}}.edge{{fill:{t['accent']}}}.role{{fill:{t['accent_text']}}}.tag{{fill:{t['muted']}}}"
+           f".name{{fill:{t['text']}}}.edge{{fill:{t['accent']}}}.role{{fill:{t['accent_text']}}}.tag,.dep{{fill:{t['muted']}}}"
            f".chip{{fill:{t['surface']};stroke:{t['line_strong']}}}.ic{{fill:none;stroke:{t['text']};stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}}"
            f".lbl{{fill:{t['text']}}}.led{{fill:{t['accent']}}}.wire{{stroke:{t['line_strong']};fill:none}}"
            f".flow{{stroke:{t['accent']};stroke-opacity:.55;stroke-dasharray:2 6;fill:none}}.chev{{stroke:{t['muted']};fill:none;stroke-width:1.2}}"
            f".pkt{{fill:{t['accent']}}}.loop{{fill:none;stroke:{t['accent2']};stroke-opacity:.6;stroke-dasharray:3 4}}.rpkt{{fill:{t['accent2']};opacity:0}}"
-           f".scanl{{fill:{t['accent2']}}}.orb{{fill:none;stroke:{t['line_strong']};stroke-dasharray:1 5}}.sat{{fill:{t['accent']}}}"
-           f".core{{fill:{t['surface']};stroke:{t['line_strong']}}}.alab{{fill:{t['text']}}}.ahead{{fill:{t['muted']}}}.adot{{fill:{t['accent']}}}"
+           f".scanl{{fill:{t['accent2']}}}.kbr{{fill:none;stroke:{t['line_strong']}}}.ktap{{fill:{t['line_strong']}}}"
+           f".sl{{fill:none;stroke:{t['accent']};stroke-opacity:.22}}.spk{{fill:{t['accent']};opacity:0}}"
+           f".alab{{fill:{t['text']}}}.ahead{{fill:{t['muted']}}}.adot{{fill:{t['accent']}}}"
            f".pr{{fill:{t['accent_text']}}}.tk{{fill:{t['text']}}}.cur{{fill:{t['accent']}}}")
-    parts = [f"{name}.", f"{role}." if role else "", tagline,
-             "Diagram of how I work: " + ", ".join(STAGES) + ", with audit findings looping back to the agents.",
-             f"Agents: {', '.join(agents)}." if agents else "",
+    parts = [f"{name}.", f"{role}." if role else "", tagline, " · ".join(depth) + "." if depth else "",
+             "Diagram of how I work: " + ", ".join(STAGES) + ", with audit findings looping back into the build.",
+             f"{kit_name}: {', '.join(kit)}, feeding the build stage." if kit else "",
              ("Principles: " + " ".join(ticker)) if ticker else "",
              " · ".join(v for v in meta.values() if v) + "."]
     return d.render(H, name, " ".join(p for p in parts if p)), d.anim
 
 
-def agents_cluster(d: Doc, t: dict, tier: str, W: int, x0: float, top_g: float, name_y: float, agents: list[str],
-                   name_right: float = 0, name_fs: float = 46) -> None:
-    """Orbiting agent nodes. Desktop also lists the agent tools (true labels from profile.yml) in
-    columns of three, right-aligned to the same inset as the name and aligned to the name's cap line."""
-    if tier == "desktop":
-        # list block: columns of up to three, widths measured with JetBrains Mono (>= system mono)
-        cols = [agents[i:i + 3] for i in range(0, len(agents), 3)]
-        col_w = [11 + max(d.width("mono", 12, a) for a in col) for col in cols]
-        list_w = sum(col_w) + 18 * (len(cols) - 1)
+def toolkit(d: Doc, tier: str, W: int, x0: float, name_y: float, name_fs: float, head: str, kit: list[str],
+            fs: float, feed: tuple[float, float], ch: float, lab_fs: float, kit_top: float) -> None:
+    """The AI toolkit list (true labels from profile.yml) and faint signal lines converging on the
+    BUILD stage. Desktop: top-right, two columns of three, aligned to the name's cap line. Mid: one
+    column top-right. Mobile: a block under the pipeline; the lines rise into BUILD from below."""
+    bx, by = feed
+    if tier == "mobile":
+        cols = [kit[i:i + 3] for i in range(0, len(kit), 3)]
+    elif tier == "mid":
+        cols = [kit]
+    else:
+        cols = [kit[i:i + 3] for i in range(0, len(kit), 3)]
+    col_w = [11 + max(d.width("mono", fs, a) for a in col) for col in cols]
+    list_w = sum(col_w) + 18 * (len(cols) - 1)
+    pitch = fs + 5 if tier != "mobile" else fs + 6
+    parts = []
+    if tier != "mobile":
         list_x = W - x0 - list_w
         cap_top = name_y - name_fs * .73          # cap height of Inter Display
         head_y = cap_top + 8                      # 11px heading: cap top on the name's cap line
-        rows_y = [head_y + 20 + k * 17 for k in range(3)]
-        r = 30
-        ocy = (cap_top + rows_y[-1]) / 2
-        ocx = list_x - 26 - r
-        if ocx - r - 6 < name_right + 24:         # never crowd the name: shrink the orbit if needed
-            r = max(18, (list_x - 26 - name_right - 24 - 6) / 2)
-            ocx = list_x - 26 - r
-    elif tier == "mid":
-        ocx, ocy, r = W - x0 - 40, top_g + 50, 30
+        rows_y = [head_y + 20 + k * pitch for k in range(max(len(c) for c in cols))]
+        bus_y = rows_y[-1] + 14
+        conv = (bx, by - ch / 2 - 30)             # lines merge here, then one stem drops into BUILD
+        stem_end = by - ch / 2 - 3
     else:
-        ocx, ocy, r = W - x0 - 26, name_y - 12, 20
-    orbit = f"M{num(ocx - r)} {num(ocy)}a{r} {r} 0 1 0 {2 * r} 0a{r} {r} 0 1 0 -{2 * r} 0"
-    parts = [f'<path class="orb" d="{orbit}"/>',
-             f'<circle class="core" cx="{num(ocx)}" cy="{num(ocy)}" r="{13 if tier != "mobile" else 10}"/>',
-             d.icon("agents", ocx - 8, ocy - 8, "ic", 1 if tier != "mobile" else .8)]
-    if tier == "mobile":
-        parts[-1] = d.icon("agents", ocx - 6.4, ocy - 6.4, "ic", .8)
-    for k in range(3):
-        parts.append(f'<circle class="sat s{k}" r="{2.6 - k * .4:.1f}"/>')
-        d.animate(f"s{k}", f"offset-path:path('{orbit}');animation:orbit 9.7s linear {-k * 9.7 / 3:.2f}s infinite", "orbit")
-    if tier == "desktop" and agents:
-        parts.append(d.mono_text(11, "AGENTS", list_x, head_y, "ahead", "start", 2))
-        cx = list_x
-        for col, w in zip(cols, col_w):
-            for k, a in enumerate(col):
-                parts.append(f'<circle class="adot" cx="{num(cx + 2.5)}" cy="{num(rows_y[k] - 4)}" r="2"/>')
-                parts.append(d.mono_text(12, a, cx + 11, rows_y[k], "alab"))
-            cx += w + 18
+        list_x = x0
+        bus_y = kit_top + 34
+        head_y = bus_y + 20
+        rows_y = [head_y + 20 + k * pitch for k in range(3)]
+        lab_base = by + ch / 2 + 20
+        conv = (bx, lab_base + 17)
+        stem_end = lab_base + 7
+    parts.append(d.mono_text(11 if tier != "mobile" else 13, head, list_x, head_y, "ahead", "start", 2))
+    cx = list_x
+    for col, w in zip(cols, col_w):
+        for k, a in enumerate(col):
+            parts.append(f'<circle class="adot" cx="{num(cx + 2.5)}" cy="{num(rows_y[k] - 4)}" r="2"/>')
+            parts.append(d.mono_text(fs, a, cx + 11, rows_y[k], "alab"))
+        cx += w + 18
+
+    # bus: a bracket under (desktop, mid) or over (mobile) the list, with three taps
+    tick = 4 if tier != "mobile" else -4
+    parts.append(f'<path class="kbr" d="M{num(list_x)} {num(bus_y - tick)}V{num(bus_y + .5)}H{num(list_x + list_w)}V{num(bus_y - tick)}"/>')
+    taps = [list_x + list_w * f for f in (.12, .5, .88)]
+    lines = []
+    for tx in taps:
+        dy = conv[1] - bus_y
+        lines.append(f"M{num(tx)} {num(bus_y)}C{num(tx)} {num(bus_y + dy * .55)} {num(conv[0])} {num(conv[1] - dy * .5)} "
+                     f"{num(conv[0])} {num(conv[1])}V{num(stem_end)}")
+        parts.append(f'<circle class="ktap" cx="{num(tx)}" cy="{num(bus_y)}" r="2"/>')
+    parts.append('<path class="sl" d="' + "".join(lines) + '"/>')
+    sgn = 1 if stem_end > conv[1] else -1
+    parts.append(f'<path class="chev" d="M{num(bx - 3.5)} {num(stem_end - sgn * 4.5)}l3.5 {num(sgn * 4)} 3.5 {num(-sgn * 4)}"/>')
+    for k, p in enumerate(lines):
+        parts.append(f'<rect class="spk k{k}" x="-3.5" y="-2" width="7" height="4" rx="2"/>')
+        per = SIGNAL_PERIODS[k % 3]
+        d.animate(f"k{k}", f"offset-path:path('{p}');offset-rotate:auto;animation:sgl {per}s cubic-bezier(.5,0,.5,1) {2.6 + k * .9:.2f}s infinite")
+    d.keyframes("sgl", "0%{offset-distance:0%;opacity:0}8%{opacity:1}44%{opacity:1}50%,100%{offset-distance:100%;opacity:0}")
     d.add('<g class="clus">' + "".join(parts) + "</g>")
     d.animate("clus", "animation:fade .8s ease-out 1.5s backwards", "fade")
 
@@ -270,8 +307,10 @@ def diagram(d: Doc, t: dict, tier: str, pts: list, cw: float, ch: float, lab_fs:
     g.append(f'<path class="wire" d="{"".join(wires)}"/><path class="flow" d="{"".join(flow)}"/>')
     d.animate("flow", "animation:march 1.9s linear infinite", "march")
 
-    # return loop: audit -> agents, arcing over the chips
+    # return loop: audit -> build, arcing over the chips. It lands on BUILD's side facing AUDIT,
+    # leaving the top centre to the toolkit's stem.
     (sx, sy), (ex, ey) = pts[STAGES.index(LOOP[0])], pts[STAGES.index(LOOP[1])]
+    ex += 13 * (1 if sx > ex else -1) if tier != "mobile" else 0
     top_s, top_e, lift = sy - ch / 2 - 2, ey - ch / 2 - 2, 28
     loop = f"M{num(sx)} {num(top_s)}C{num(sx)} {num(top_s - lift)} {num(ex)} {num(top_e - lift)} {num(ex)} {num(top_e)}"
     g.append(f'<path class="loop" d="{loop}"/><path class="chev" d="M{num(ex - 3.5)} {num(top_e - 5)}l3.5 4 3.5-4"/>')

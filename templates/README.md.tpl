@@ -7,11 +7,8 @@
 <!-- START:links -->
 <!-- END:links -->
 
-<!-- START:building -->
-<!-- END:building -->
-
-<!-- START:clients -->
-<!-- END:clients -->
+<!-- START:motion -->
+<!-- END:motion -->
 
 <!-- START:work -->
 <!-- END:work -->
@@ -19,8 +16,8 @@
 <!-- START:stack -->
 <!-- END:stack -->
 
-<!-- START:activity -->
-<!-- END:activity -->
+<!-- START:signal -->
+<!-- END:signal -->
 
 <!-- START:principles -->
 <!-- END:principles -->

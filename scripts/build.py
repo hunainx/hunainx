@@ -1,6 +1,6 @@
 """Build every SVG component and the README regions.
 
-Inputs : data/profile.yml (copy, verbatim), data/projects.yml (building cards),
+Inputs : data/profile.yml (copy, verbatim), data/projects.yml ("In motion" cards),
          data/config.yml (tiers, rules, tokens), data/github.json (every number)
 Outputs: assets/** and README.md regions between <!-- START:x --> / <!-- END:x -->.
 Prose outside the markers is never touched. Output is deterministic.
@@ -18,13 +18,13 @@ from pathlib import Path
 
 import yaml
 
-from components import activity, cards, hero, label, method, misc, stack, work
+from components import cards, hero, label, method, misc, signal, stack, work
 from svgkit import ROOT, esc, esc_text
 
 TPL = ROOT / "templates" / "README.md.tpl"
-REGIONS = ("hero", "about", "links", "building", "clients", "work", "stack", "activity", "principles", "footer")
-ASSET_DIRS = ("hero", "labels", "building", "clients", "work", "stack", "activity", "method", "dividers", "footer", "chips")
-LEGACY_DIRS = ("panels", "projects", "stats")  # v1 layout; cleaned when found
+REGIONS = ("hero", "about", "links", "motion", "work", "stack", "signal", "principles", "footer")
+ASSET_DIRS = ("hero", "labels", "motion", "work", "stack", "signal", "method", "dividers", "footer", "chips")
+LEGACY_DIRS = ("panels", "projects", "stats", "building", "clients", "activity")  # earlier layouts; cleaned when found
 
 
 def nonempty(v) -> bool:
@@ -106,7 +106,9 @@ def build(b: Build) -> dict[str, str]:
 
     # hero (always)
     hp = b.asset("hero", "hero", "hero", lambda t, tier, width: hero.render(t, p, cfg, tier, width))
-    alt = p["name"].strip() + "".join(f" — {p[k].strip()}" for k in ("role", "tagline") if nonempty(p.get(k)))
+    depth = [x.strip() for x in p.get("depth") or [] if nonempty(x)]
+    alt = (p["name"].strip() + "".join(f" — {p[k].strip()}" for k in ("role", "tagline") if nonempty(p.get(k)))
+           + (f" — {' · '.join(depth)}" if depth else ""))
     pic = b.picture(hp, alt)
     if nonempty((p.get("links") or {}).get("website")):
         pic = f'<a href="{esc(p["links"]["website"].strip())}">\n{pic}\n</a>'
@@ -115,6 +117,10 @@ def build(b: Build) -> dict[str, str]:
     if nonempty(p.get("about")):
         paras = [" ".join(x.split()) for x in p["about"].strip().split("\n") if x.strip()]
         regions["about"] = "\n\n".join(esc_text(x) for x in paras)
+    if nonempty(p.get("current")):
+        # one small, muted line directly under About
+        cur = f'<sub>{esc_text(p["current"].strip())}</sub>'
+        regions["about"] = f'{regions["about"]}\n\n{cur}' if regions["about"] else cur
 
     links = {k: v.strip() for k, v in (p.get("links") or {}).items() if nonempty(v) and k in misc.LINK_LABELS}
     if links:
@@ -125,11 +131,10 @@ def build(b: Build) -> dict[str, str]:
             chips.append(f'<a href="{esc(href)}">{b.picture(cp, misc.LINK_LABELS[key])}</a>')
         regions["links"] = "<p>\n" + "\n".join(chips) + "\n</p>"
 
-    # currently building + client work: one SVG per card (each can link), rows of two
-    for key, folder, items in (("building", "building", cards.building_cards(p, b.projects)),
-                               ("clients", "clients", cards.client_cards(b.projects))):
-        if items:
-            regions[key] = b.section(key, card_grid(b, folder, items))
+    # in motion: one SVG per card (each can link), rows of two
+    items = cards.motion_cards(p, b.projects)
+    if items:
+        regions["motion"] = b.section("motion", card_grid(b, "motion", items))
 
     # selected work (only real public repos)
     repos = {r["name"]: r for r in gh.get("repos", [])}
@@ -155,19 +160,19 @@ def build(b: Build) -> dict[str, str]:
     st = {k: v for k, v in st.items() if v}
     if st:
         focus = [f for f in p.get("focus") or [] if nonempty(f)]
-        sp = b.asset("stack", "stack", "stack", lambda t, tier, width: stack.render(t, st, focus, tier, width))
-        alt_s = "; ".join(f"{k}: {', '.join(v)}" for k, v in st.items()) + (f". Focus: {', '.join(focus)}." if focus else ".")
+        heads = (cfg["labels"]["stack_left"], cfg["labels"]["stack_right"])
+        sp = b.asset("stack", "stack", "stack", lambda t, tier, width: stack.render(t, st, focus, tier, width, heads))
+        alt_s = (f"{heads[0].capitalize()}: " + "; ".join(f"{k}: {', '.join(v)}" for k, v in st.items())
+                 + (f". {heads[1].capitalize()}: {', '.join(focus)}." if focus else "."))
         regions["stack"] = b.section("stack", f"<p>\n{b.picture(sp, alt_s)}\n</p>")
 
-    # activity: honest low-data state until the threshold, then the data panel
-    total = gh["contributions"]["total_12mo"]
-    if total >= th["activity_min_contributions"]:
-        ap = b.asset("activity", "activity", "activity", lambda t, tier, width: activity.with_data(t, gh, p, cfg, tier, width))
-        alt_a = f"{total} {cfg['labels']['activity_caption']}"
-    else:
-        ap = b.asset("activity", "activity", "activity", lambda t, tier, width: activity.low_data(t, gh, cfg["labels"], tier, width))
-        alt_a = f"{cfg['labels']['activity_low']}."
-    regions["activity"] = b.section("activity", f"<p>\n{b.picture(ap, alt_a)}\n</p>")
+    # shipping signal: real counts only, each behind its own threshold; omitted when none qualifies
+    counts = signal.tiles(gh, cfg)
+    if counts:
+        gp = b.asset("signal", "signal", "signal", lambda t, tier, width: signal.render(t, gh, cfg, tier, width))
+        alt_g = (f"{cfg['labels']['signal_header'].capitalize()} ({signal.caption(gh, cfg)}): "
+                 + "; ".join(f"{lab}: {v}" for lab, v in counts) + ".")
+        regions["signal"] = b.section("signal", f"<p>\n{b.picture(gp, alt_g)}\n</p>")
 
     steps = [m for m in p.get("method") or [] if nonempty(m.get("stage"))]
     principles = [s_.strip() for s_ in p.get("principles") or [] if nonempty(s_)]
@@ -179,6 +184,10 @@ def build(b: Build) -> dict[str, str]:
             inner.append("\n".join(f"{i}. **{esc_text(m['stage'].strip())}** — {esc_text(m['line'].strip())}"
                                     for i, m in enumerate(steps, 1)))
         inner += [esc_text(x) for x in principles]
+        proof = p.get("proof") or {}
+        if nonempty(proof.get("text")):
+            text = esc_text(proof["text"].strip())
+            inner.append(f"[{text}]({proof['link'].strip()})" if nonempty(proof.get("link")) else text)
         regions["principles"] = b.section("principles", "\n\n".join(inner))
 
     # footer (always)
@@ -189,10 +198,6 @@ def build(b: Build) -> dict[str, str]:
     regions["footer"] = (f'<p>\n{b.picture(sep, "Divider")}\n</p>\n\n<p>\n{b.picture(fp, cfg["labels"]["footer"] + " · " + gh["last_changed"])}\n'
                          f'<br>\n<sub><a href="{wf}">refresh workflow</a></sub>\n</p>')
     return regions
-
-
-def slug(text: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
 def card_grid(b: Build, folder: str, items: list[dict]) -> str:
@@ -207,8 +212,7 @@ def card_grid(b: Build, folder: str, items: list[dict]) -> str:
                 heights[(tier, r + j)] = h
     out = []
     for i, c in enumerate(items):
-        stem = c["title"] if c["kind"] == "building" else slug(c["title"])
-        cp = b.asset("cards", folder, stem, lambda t, tier, width, c=c, i=i:
+        cp = b.asset("cards", folder, c["id"], lambda t, tier, width, c=c, i=i:
                      cards.render(t, c, tier, cards.TIER[tier][0], heights[(tier, i)], i),
                      tiers=("desktop", "mid", "mobile"))
         pic = b.picture(cp, cards.alt(c))

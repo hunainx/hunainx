@@ -44,6 +44,7 @@ ICONS = {
     "check": '<rect x="1.5" y="1.5" width="13" height="13" rx="3"/><path d="m4.8 8.2 2.2 2.2 4.4-4.6"/>',
     "challenge": '<circle cx="8" cy="8" r="6.5"/><path d="M6 6.2a2 2 0 1 1 2.9 1.8c-.6.3-.9.8-.9 1.4v.4"/><path d="M8 11.8v.1"/>',
     "architect": '<rect x="5.5" y="1.5" width="5" height="4" rx="1"/><rect x="1.5" y="10.5" width="5" height="4" rx="1"/><rect x="9.5" y="10.5" width="5" height="4" rx="1"/><path d="M8 5.5v2.5M4 10.5V8h8v2.5"/>',
+    "tick": '<path d="m4 8.4 2.7 2.7L12 5.6"/>',
     "index": '<path d="M2 3.5h12M2 8h12M2 12.5h12"/><path d="M5 2v3M9 6.5v3M6.5 11v3"/>',
 }
 
@@ -143,6 +144,31 @@ def split_tokens(doc: Doc, kind: str, size: float, tokens: list[str], sep: str, 
             lines.append(cur)
             cur = tok
     return lines + ([cur] if cur else [])
+
+
+def balanced(doc: Doc, kind: str, size: float, tokens: list[str], sep: str, max_w: float, tr: float = 0.0) -> list[str]:
+    """As few lines as a greedy wrap needs, but with the breaks placed so the longest line is as
+    short as possible (no orphaned last word). Tokens are never split."""
+    greedy = split_tokens(doc, kind, size, tokens, sep, max_w, tr)
+    k, n = len(greedy), len(tokens)
+    if k <= 1:
+        return greedy
+    w = lambda i, j: doc.width(kind, size, sep.join(tokens[i:j]), tr)  # noqa: E731
+    best: dict[tuple[int, int], tuple[float, list[int]]] = {}
+
+    def solve(i: int, lines: int) -> tuple[float, list[int]]:
+        if lines == 1:
+            return w(i, n), []
+        if (i, lines) not in best:
+            opts = [(max(w(i, j), solve(j, lines - 1)[0]), [j] + solve(j, lines - 1)[1]) for j in range(i + 1, n - lines + 2)]
+            best[(i, lines)] = min(opts)
+        return best[(i, lines)]
+
+    cost, cuts = solve(0, k)
+    if cost > max_w:
+        return greedy
+    edges = [0] + cuts + [n]
+    return [sep.join(tokens[a:b]) for a, b in zip(edges, edges[1:])]
 
 
 def wrap(doc: Doc, kind: str, size: float, text: str, max_w: float, tr: float = 0.0) -> list[str]:
