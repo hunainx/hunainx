@@ -679,7 +679,9 @@
         "start": "2026-09-27",
         "count": 1,
         "days": [
-          1
+          1,
+          0,
+          0
         ]
       }
     ]
@@ -695,5 +697,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-09-27"
+  "last_changed": "2026-09-29"
 }
