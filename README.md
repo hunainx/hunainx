@@ -81,6 +81,27 @@ The domains change. The method doesn't.
 <!-- END:motion -->
 
 <!-- START:work -->
+<p>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/labels/work-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/labels/work-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/labels/work-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/labels/work-mobile-light.svg">
+  <img src="assets/labels/work-light.svg" alt="$ ls ./work">
+</picture>
+</p>
+
+## Selected work
+
+<p>
+<a href="https://github.com/hunainx/startup-naming"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/startup-naming-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/startup-naming-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/startup-naming-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/startup-naming-mobile-light.svg">
+  <img src="assets/work/startup-naming-light.svg" alt="startup-naming: Claude skill that names your startup and never shows a name unless its exact .com is verified free.">
+</picture></a>
+</p>
 <!-- END:work -->
 
 <!-- START:stack -->
@@ -167,7 +188,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-09-29">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-09-30">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>

@@ -1,16 +1,45 @@
 {
   "login": "hunainx",
   "name": "Hunain Ahmed",
-  "public_repos_total": 1,
-  "eligible_public_repos": 0,
+  "public_repos_total": 2,
+  "eligible_public_repos": 1,
   "stars_earned": 0,
-  "repos": [],
-  "languages": {},
-  "language_colors": {},
-  "language_share": [],
-  "repos_with_language_bytes": 0,
+  "repos": [
+    {
+      "name": "startup-naming",
+      "url": "https://github.com/hunainx/startup-naming",
+      "homepage": "",
+      "description": "Claude skill that names your startup and never shows a name unless its exact .com is verified free.",
+      "language": "Python",
+      "stars": 0,
+      "topics": [
+        "agent-skills",
+        "brand-naming",
+        "claude-code",
+        "claude-skills",
+        "domain-availability",
+        "naming",
+        "startup"
+      ],
+      "pushed": "2026-09-29",
+      "has_language_bytes": true
+    }
+  ],
+  "languages": {
+    "Python": 2187
+  },
+  "language_colors": {
+    "Python": "#3572A5"
+  },
+  "language_share": [
+    {
+      "name": "Python",
+      "pct": "100.0"
+    }
+  ],
+  "repos_with_language_bytes": 1,
   "contributions": {
-    "total_12mo": 11,
+    "total_12mo": 18,
     "weeks": [
       {
         "start": "2025-10-05",
@@ -677,10 +706,11 @@
       },
       {
         "start": "2026-09-27",
-        "count": 1,
+        "count": 8,
         "days": [
           1,
           0,
+          7,
           0
         ]
       }
@@ -688,8 +718,8 @@
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 11,
-    "repos_contributed_12mo": 2,
+    "contributions_12mo": 18,
+    "repos_contributed_12mo": 3,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
       "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
@@ -697,5 +727,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-09-29"
+  "last_changed": "2026-09-30"
 }
