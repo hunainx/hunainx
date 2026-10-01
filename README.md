@@ -94,6 +94,13 @@ The domains change. The method doesn't.
 ## Selected work
 
 <p>
+<a href="https://github.com/hunainx/casefile"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/casefile-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/casefile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/casefile-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/casefile-mobile-light.svg">
+  <img src="assets/work/casefile-light.svg" alt="casefile">
+</picture></a>
 <a href="https://github.com/hunainx/startup-naming"><picture>
   <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/startup-naming-dark.svg">
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/startup-naming-light.svg">
@@ -188,7 +195,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-09-30">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-01">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>

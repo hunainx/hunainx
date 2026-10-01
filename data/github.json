@@ -1,10 +1,21 @@
 {
   "login": "hunainx",
   "name": "Hunain Ahmed",
-  "public_repos_total": 2,
-  "eligible_public_repos": 1,
+  "public_repos_total": 3,
+  "eligible_public_repos": 2,
   "stars_earned": 0,
   "repos": [
+    {
+      "name": "casefile",
+      "url": "https://github.com/hunainx/casefile",
+      "homepage": "",
+      "description": "",
+      "language": "TypeScript",
+      "stars": 0,
+      "topics": [],
+      "pushed": "2026-09-30",
+      "has_language_bytes": true
+    },
     {
       "name": "startup-naming",
       "url": "https://github.com/hunainx/startup-naming",
@@ -26,20 +37,57 @@
     }
   ],
   "languages": {
-    "Python": 2187
+    "TypeScript": 2853104,
+    "Python": 112322,
+    "C#": 13465,
+    "Shell": 12455,
+    "PLpgSQL": 11901,
+    "PowerShell": 2736,
+    "Dockerfile": 1809,
+    "HTML": 1558,
+    "JavaScript": 1349,
+    "Rich Text Format": 1235
   },
   "language_colors": {
-    "Python": "#3572A5"
+    "C#": "#7355DD",
+    "Dockerfile": "#384D54",
+    "HTML": "#E34C26",
+    "JavaScript": "#F1E05A",
+    "PLpgSQL": "#336790",
+    "PowerShell": "#012456",
+    "Python": "#3572A5",
+    "Shell": "#89E051",
+    "TypeScript": "#3178C6"
   },
   "language_share": [
     {
+      "name": "TypeScript",
+      "pct": "94.7"
+    },
+    {
       "name": "Python",
-      "pct": "100.0"
+      "pct": "3.7"
+    },
+    {
+      "name": "C#",
+      "pct": "0.4"
+    },
+    {
+      "name": "Shell",
+      "pct": "0.4"
+    },
+    {
+      "name": "PLpgSQL",
+      "pct": "0.4"
+    },
+    {
+      "name": "Other",
+      "pct": "0.3"
     }
   ],
-  "repos_with_language_bytes": 1,
+  "repos_with_language_bytes": 2,
   "contributions": {
-    "total_12mo": 18,
+    "total_12mo": 23,
     "weeks": [
       {
         "start": "2025-10-05",
@@ -706,20 +754,21 @@
       },
       {
         "start": "2026-09-27",
-        "count": 8,
+        "count": 13,
         "days": [
           1,
           0,
           7,
-          0
+          1,
+          4
         ]
       }
     ]
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 18,
-    "repos_contributed_12mo": 3,
+    "contributions_12mo": 23,
+    "repos_contributed_12mo": 4,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
       "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
@@ -727,5 +776,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-09-30"
+  "last_changed": "2026-10-01"
 }
