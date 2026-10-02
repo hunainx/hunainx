@@ -1,8 +1,8 @@
 {
   "login": "hunainx",
   "name": "Hunain Ahmed",
-  "public_repos_total": 3,
-  "eligible_public_repos": 2,
+  "public_repos_total": 4,
+  "eligible_public_repos": 3,
   "stars_earned": 0,
   "repos": [
     {
@@ -34,11 +34,29 @@
       ],
       "pushed": "2026-09-29",
       "has_language_bytes": true
+    },
+    {
+      "name": "traceward",
+      "url": "https://github.com/hunainx/traceward",
+      "homepage": "",
+      "description": "Audit AI-built code against its specification. Every finding cites evidence that is independently verified.",
+      "language": "Python",
+      "stars": 0,
+      "topics": [
+        "ai",
+        "code-review",
+        "evaluation",
+        "llm",
+        "python",
+        "verification"
+      ],
+      "pushed": "2026-10-01",
+      "has_language_bytes": true
     }
   ],
   "languages": {
     "TypeScript": 2853104,
-    "Python": 112322,
+    "Python": 714934,
     "C#": 13465,
     "Shell": 12455,
     "PLpgSQL": 11901,
@@ -46,13 +64,15 @@
     "Dockerfile": 1809,
     "HTML": 1558,
     "JavaScript": 1349,
-    "Rich Text Format": 1235
+    "Rich Text Format": 1235,
+    "Makefile": 225
   },
   "language_colors": {
     "C#": "#7355DD",
     "Dockerfile": "#384D54",
     "HTML": "#E34C26",
     "JavaScript": "#F1E05A",
+    "Makefile": "#427819",
     "PLpgSQL": "#336790",
     "PowerShell": "#012456",
     "Python": "#3572A5",
@@ -62,11 +82,11 @@
   "language_share": [
     {
       "name": "TypeScript",
-      "pct": "94.7"
+      "pct": "78.9"
     },
     {
       "name": "Python",
-      "pct": "3.7"
+      "pct": "19.8"
     },
     {
       "name": "C#",
@@ -74,20 +94,20 @@
     },
     {
       "name": "Shell",
-      "pct": "0.4"
+      "pct": "0.3"
     },
     {
       "name": "PLpgSQL",
-      "pct": "0.4"
+      "pct": "0.3"
     },
     {
       "name": "Other",
-      "pct": "0.3"
+      "pct": "0.2"
     }
   ],
-  "repos_with_language_bytes": 2,
+  "repos_with_language_bytes": 3,
   "contributions": {
-    "total_12mo": 23,
+    "total_12mo": 130,
     "weeks": [
       {
         "start": "2025-10-05",
@@ -754,21 +774,22 @@
       },
       {
         "start": "2026-09-27",
-        "count": 13,
+        "count": 120,
         "days": [
           1,
-          0,
-          7,
-          1,
-          4
+          15,
+          60,
+          20,
+          24,
+          0
         ]
       }
     ]
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 23,
-    "repos_contributed_12mo": 4,
+    "contributions_12mo": 130,
+    "repos_contributed_12mo": 5,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
       "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
@@ -776,5 +797,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-10-01"
+  "last_changed": "2026-10-02"
 }

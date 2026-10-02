@@ -94,6 +94,13 @@ The domains change. The method doesn't.
 ## Selected work
 
 <p>
+<a href="https://github.com/hunainx/traceward"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/traceward-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/traceward-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/traceward-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/traceward-mobile-light.svg">
+  <img src="assets/work/traceward-light.svg" alt="traceward: Audit AI-built code against its specification. Every finding cites evidence that is independently verified.">
+</picture></a>
 <a href="https://github.com/hunainx/casefile"><picture>
   <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/casefile-dark.svg">
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/casefile-light.svg">
@@ -138,6 +145,29 @@ The domains change. The method doesn't.
 <!-- END:stack -->
 
 <!-- START:signal -->
+<p>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/labels/signal-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/labels/signal-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/labels/signal-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/labels/signal-mobile-light.svg">
+  <img src="assets/labels/signal-light.svg" alt="$ ./signal">
+</picture>
+</p>
+
+## Shipping signal
+
+<p>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1260px)" srcset="assets/signal/signal-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1260px)" srcset="assets/signal/signal-light.svg">
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/signal/signal-mid-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/signal/signal-mid-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/signal/signal-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/signal/signal-mobile-light.svg">
+  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 130; Repositories contributed to (12 mo): 5; Public repos: 3.">
+</picture>
+</p>
 <!-- END:signal -->
 
 <!-- START:principles -->
@@ -195,7 +225,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-01">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-02">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>
