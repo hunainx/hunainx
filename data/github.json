@@ -781,6 +781,7 @@
           60,
           20,
           24,
+          0,
           0
         ]
       }
@@ -797,5 +798,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-10-02"
+  "last_changed": "2026-10-03"
 }
