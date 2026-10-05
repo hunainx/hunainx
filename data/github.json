@@ -110,19 +110,6 @@
     "total_12mo": 130,
     "weeks": [
       {
-        "start": "2025-10-05",
-        "count": 0,
-        "days": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
-      {
         "start": "2025-10-12",
         "count": 0,
         "days": [
@@ -784,6 +771,14 @@
           0,
           0
         ]
+      },
+      {
+        "start": "2026-10-04",
+        "count": 0,
+        "days": [
+          0,
+          0
+        ]
       }
     ]
   },
@@ -798,5 +793,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-10-03"
+  "last_changed": "2026-10-05"
 }
