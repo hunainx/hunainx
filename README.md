@@ -94,6 +94,20 @@ The domains change. The method doesn't.
 ## Selected work
 
 <p>
+<a href="https://github.com/hunainx/frictionborn"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/frictionborn-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/frictionborn-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/frictionborn-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/frictionborn-mobile-light.svg">
+  <img src="assets/work/frictionborn-light.svg" alt="frictionborn">
+</picture></a>
+<a href="https://github.com/hunainx/snap-vanish"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/snap-vanish-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/snap-vanish-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/snap-vanish-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/snap-vanish-mobile-light.svg">
+  <img src="assets/work/snap-vanish-light.svg" alt="snap-vanish">
+</picture></a>
 <a href="https://github.com/hunainx/traceward"><picture>
   <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/traceward-dark.svg">
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/traceward-light.svg">
@@ -107,13 +121,6 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: dark)" srcset="assets/work/casefile-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/work/casefile-mobile-light.svg">
   <img src="assets/work/casefile-light.svg" alt="casefile">
-</picture></a>
-<a href="https://github.com/hunainx/startup-naming"><picture>
-  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/startup-naming-dark.svg">
-  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/startup-naming-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/work/startup-naming-mobile-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/work/startup-naming-mobile-light.svg">
-  <img src="assets/work/startup-naming-light.svg" alt="startup-naming: Claude skill that names your startup and never shows a name unless its exact .com is verified free.">
 </picture></a>
 </p>
 <!-- END:work -->
@@ -165,7 +172,7 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/signal/signal-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/signal/signal-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/signal/signal-mobile-light.svg">
-  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 130; Repositories contributed to (12 mo): 5; Public repos: 3.">
+  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3153; Repositories contributed to (12 mo): 7; Public repos: 5.">
 </picture>
 </p>
 <!-- END:signal -->
@@ -225,7 +232,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-25">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-27">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>

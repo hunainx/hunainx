@@ -1,8 +1,8 @@
 {
   "login": "hunainx",
   "name": "Hunain Ahmed",
-  "public_repos_total": 4,
-  "eligible_public_repos": 3,
+  "public_repos_total": 6,
+  "eligible_public_repos": 5,
   "stars_earned": 0,
   "repos": [
     {
@@ -14,6 +14,28 @@
       "stars": 0,
       "topics": [],
       "pushed": "2026-09-30",
+      "has_language_bytes": true
+    },
+    {
+      "name": "frictionborn",
+      "url": "https://github.com/hunainx/frictionborn",
+      "homepage": "",
+      "description": "",
+      "language": "TypeScript",
+      "stars": 0,
+      "topics": [],
+      "pushed": "2026-10-26",
+      "has_language_bytes": true
+    },
+    {
+      "name": "snap-vanish",
+      "url": "https://github.com/hunainx/snap-vanish",
+      "homepage": "",
+      "description": "",
+      "language": "JavaScript",
+      "stars": 0,
+      "topics": [],
+      "pushed": "2026-10-26",
       "has_language_bytes": true
     },
     {
@@ -55,20 +77,22 @@
     }
   ],
   "languages": {
-    "TypeScript": 2853104,
+    "TypeScript": 3923652,
     "Python": 714934,
+    "JavaScript": 134668,
     "C#": 13465,
     "Shell": 12455,
     "PLpgSQL": 11901,
+    "CSS": 10132,
+    "HTML": 6843,
     "PowerShell": 2736,
     "Dockerfile": 1809,
-    "HTML": 1558,
-    "JavaScript": 1349,
     "Rich Text Format": 1235,
     "Makefile": 225
   },
   "language_colors": {
     "C#": "#7355DD",
+    "CSS": "#663399",
     "Dockerfile": "#384D54",
     "HTML": "#E34C26",
     "JavaScript": "#F1E05A",
@@ -82,32 +106,32 @@
   "language_share": [
     {
       "name": "TypeScript",
-      "pct": "78.9"
+      "pct": "81.2"
     },
     {
       "name": "Python",
-      "pct": "19.8"
+      "pct": "14.8"
+    },
+    {
+      "name": "JavaScript",
+      "pct": "2.8"
     },
     {
       "name": "C#",
-      "pct": "0.4"
+      "pct": "0.3"
     },
     {
       "name": "Shell",
       "pct": "0.3"
     },
     {
-      "name": "PLpgSQL",
-      "pct": "0.3"
-    },
-    {
       "name": "Other",
-      "pct": "0.2"
+      "pct": "0.7"
     }
   ],
-  "repos_with_language_bytes": 3,
+  "repos_with_language_bytes": 5,
   "contributions": {
-    "total_12mo": 130,
+    "total_12mo": 3153,
     "weeks": [
       {
         "start": "2025-11-02",
@@ -644,147 +668,149 @@
       },
       {
         "start": "2026-08-16",
-        "count": 0,
+        "count": 47,
         "days": [
           0,
           0,
-          0,
-          0,
-          0,
-          0,
-          0
+          1,
+          13,
+          13,
+          12,
+          8
         ]
       },
       {
         "start": "2026-08-23",
-        "count": 0,
+        "count": 5,
         "days": [
+          1,
           0,
           0,
           0,
           0,
-          0,
-          0,
+          4,
           0
         ]
       },
       {
         "start": "2026-08-30",
-        "count": 1,
+        "count": 40,
         "days": [
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
+          6,
+          5,
+          8,
+          6,
+          3,
+          12,
           0
         ]
       },
       {
         "start": "2026-09-06",
-        "count": 0,
+        "count": 143,
         "days": [
           0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          9,
+          9,
+          47,
+          22,
+          30,
+          26
         ]
       },
       {
         "start": "2026-09-13",
-        "count": 0,
+        "count": 90,
         "days": [
+          7,
           0,
-          0,
-          0,
-          0,
-          0,
-          0,
+          23,
+          24,
+          32,
+          4,
           0
         ]
       },
       {
         "start": "2026-09-20",
-        "count": 8,
+        "count": 112,
         "days": [
           0,
-          0,
-          0,
-          0,
-          0,
-          1,
-          7
+          4,
+          36,
+          15,
+          17,
+          12,
+          28
         ]
       },
       {
         "start": "2026-09-27",
-        "count": 120,
+        "count": 570,
         "days": [
-          1,
-          15,
-          60,
-          20,
-          24,
-          0,
-          0
+          11,
+          50,
+          201,
+          68,
+          68,
+          89,
+          83
         ]
       },
       {
         "start": "2026-10-04",
-        "count": 0,
+        "count": 852,
         "days": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          220,
+          300,
+          172,
+          88,
+          40,
+          28,
+          4
         ]
       },
       {
         "start": "2026-10-11",
-        "count": 0,
+        "count": 510,
         "days": [
           0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          13,
+          121,
+          129,
+          67,
+          123,
+          57
         ]
       },
       {
         "start": "2026-10-18",
-        "count": 0,
+        "count": 542,
         "days": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
+          3,
+          80,
+          142,
+          138,
+          94,
+          9,
+          76
         ]
       },
       {
         "start": "2026-10-25",
-        "count": 0,
+        "count": 241,
         "days": [
-          0
+          64,
+          142,
+          35
         ]
       }
     ]
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 130,
-    "repos_contributed_12mo": 5,
+    "contributions_12mo": 3153,
+    "repos_contributed_12mo": 7,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
       "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
@@ -792,5 +818,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-10-25"
+  "last_changed": "2026-10-27"
 }
