@@ -94,6 +94,13 @@ The domains change. The method doesn't.
 ## Selected work
 
 <p>
+<a href="https://github.com/hunainx/burstdown-legal"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/burstdown-legal-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/burstdown-legal-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/burstdown-legal-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/burstdown-legal-mobile-light.svg">
+  <img src="assets/work/burstdown-legal-light.svg" alt="burstdown-legal: Burstdown legal, privacy policy, terms of service, account deletion, and crate odds disclosure pages">
+</picture></a>
 <a href="https://github.com/hunainx/frictionborn"><picture>
   <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/frictionborn-dark.svg">
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/frictionborn-light.svg">
@@ -114,13 +121,6 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: dark)" srcset="assets/work/traceward-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/work/traceward-mobile-light.svg">
   <img src="assets/work/traceward-light.svg" alt="traceward: Audit AI-built code against its specification. Every finding cites evidence that is independently verified.">
-</picture></a>
-<a href="https://github.com/hunainx/casefile"><picture>
-  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/casefile-dark.svg">
-  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/casefile-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/work/casefile-mobile-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/work/casefile-mobile-light.svg">
-  <img src="assets/work/casefile-light.svg" alt="casefile">
 </picture></a>
 </p>
 <!-- END:work -->
@@ -172,7 +172,7 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/signal/signal-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/signal/signal-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/signal/signal-mobile-light.svg">
-  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3153; Repositories contributed to (12 mo): 7; Public repos: 5.">
+  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3323; Repositories contributed to (12 mo): 8; Public repos: 6.">
 </picture>
 </p>
 <!-- END:signal -->
@@ -232,7 +232,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-27">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-10-28">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>

@@ -1,10 +1,21 @@
 {
   "login": "hunainx",
   "name": "Hunain Ahmed",
-  "public_repos_total": 6,
-  "eligible_public_repos": 5,
+  "public_repos_total": 7,
+  "eligible_public_repos": 6,
   "stars_earned": 0,
   "repos": [
+    {
+      "name": "burstdown-legal",
+      "url": "https://github.com/hunainx/burstdown-legal",
+      "homepage": "",
+      "description": "Burstdown legal, privacy policy, terms of service, account deletion, and crate odds disclosure pages",
+      "language": "HTML",
+      "stars": 0,
+      "topics": [],
+      "pushed": "2026-10-27",
+      "has_language_bytes": true
+    },
     {
       "name": "casefile",
       "url": "https://github.com/hunainx/casefile",
@@ -24,7 +35,7 @@
       "language": "TypeScript",
       "stars": 0,
       "topics": [],
-      "pushed": "2026-10-26",
+      "pushed": "2026-10-27",
       "has_language_bytes": true
     },
     {
@@ -77,15 +88,15 @@
     }
   ],
   "languages": {
-    "TypeScript": 3923652,
+    "TypeScript": 3942843,
     "Python": 714934,
     "JavaScript": 134668,
+    "HTML": 50324,
+    "CSS": 13541,
     "C#": 13465,
     "Shell": 12455,
     "PLpgSQL": 11901,
-    "CSS": 10132,
-    "HTML": 6843,
-    "PowerShell": 2736,
+    "PowerShell": 10260,
     "Dockerfile": 1809,
     "Rich Text Format": 1235,
     "Makefile": 225
@@ -106,32 +117,32 @@
   "language_share": [
     {
       "name": "TypeScript",
-      "pct": "81.2"
+      "pct": "80.3"
     },
     {
       "name": "Python",
-      "pct": "14.8"
+      "pct": "14.6"
     },
     {
       "name": "JavaScript",
-      "pct": "2.8"
+      "pct": "2.7"
     },
     {
-      "name": "C#",
-      "pct": "0.3"
+      "name": "HTML",
+      "pct": "1.0"
     },
     {
-      "name": "Shell",
+      "name": "CSS",
       "pct": "0.3"
     },
     {
       "name": "Other",
-      "pct": "0.7"
+      "pct": "1.0"
     }
   ],
-  "repos_with_language_bytes": 5,
+  "repos_with_language_bytes": 6,
   "contributions": {
-    "total_12mo": 3153,
+    "total_12mo": 3323,
     "weeks": [
       {
         "start": "2025-11-02",
@@ -798,19 +809,20 @@
       },
       {
         "start": "2026-10-25",
-        "count": 241,
+        "count": 411,
         "days": [
           64,
-          142,
-          35
+          155,
+          138,
+          54
         ]
       }
     ]
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 3153,
-    "repos_contributed_12mo": 7,
+    "contributions_12mo": 3323,
+    "repos_contributed_12mo": 8,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
       "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
@@ -818,5 +830,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-10-27"
+  "last_changed": "2026-10-28"
 }
