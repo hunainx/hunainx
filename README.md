@@ -94,6 +94,13 @@ The domains change. The method doesn't.
 ## Selected work
 
 <p>
+<a href="https://github.com/hunainx/startup-naming"><picture>
+  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/startup-naming-dark.svg">
+  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/startup-naming-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/work/startup-naming-mobile-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/work/startup-naming-mobile-light.svg">
+  <img src="assets/work/startup-naming-light.svg" alt="startup-naming: Claude skill that names your startup and never shows a name unless its exact .com is verified free.">
+</picture></a>
 <a href="https://github.com/hunainx/burstdown-legal"><picture>
   <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/burstdown-legal-dark.svg">
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/burstdown-legal-light.svg">
@@ -114,13 +121,6 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: dark)" srcset="assets/work/snap-vanish-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/work/snap-vanish-mobile-light.svg">
   <img src="assets/work/snap-vanish-light.svg" alt="snap-vanish">
-</picture></a>
-<a href="https://github.com/hunainx/traceward"><picture>
-  <source media="(prefers-color-scheme: dark) and (min-width: 1012px)" srcset="assets/work/traceward-dark.svg">
-  <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/work/traceward-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/work/traceward-mobile-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/work/traceward-mobile-light.svg">
-  <img src="assets/work/traceward-light.svg" alt="traceward: Audit AI-built code against its specification. Every finding cites evidence that is independently verified.">
 </picture></a>
 </p>
 <!-- END:work -->
@@ -172,7 +172,7 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/signal/signal-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/signal/signal-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/signal/signal-mobile-light.svg">
-  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3841; Repositories contributed to (12 mo): 8; Public repos: 6.">
+  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3876; Repositories contributed to (12 mo): 8; Public repos: 6; Stars earned: 1.">
 </picture>
 </p>
 <!-- END:signal -->
@@ -232,7 +232,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-11-06">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-11-07">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>
