@@ -172,7 +172,7 @@ The domains change. The method doesn't.
   <source media="(prefers-color-scheme: light) and (min-width: 1012px)" srcset="assets/signal/signal-mid-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/signal/signal-mobile-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/signal/signal-mobile-light.svg">
-  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3876; Repositories contributed to (12 mo): 8; Public repos: 6; Stars earned: 1.">
+  <img src="assets/signal/signal-light.svg" alt="Shipping signal (public GitHub data): Contributions (12 mo): 3973; Repositories contributed to (12 mo): 8; Public repos: 6; Stars earned: 1.">
 </picture>
 </p>
 <!-- END:signal -->
@@ -232,7 +232,7 @@ Evidence over assertion. If a claim cannot be verified, it does not ship.
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/footer/footer-dark.svg">
-  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-11-07">
+  <img src="assets/footer/footer-light.svg" alt="last refresh · 2026-11-08">
 </picture>
 <br>
 <sub><a href="https://github.com/hunainx/hunainx/actions/workflows/refresh.yml">refresh workflow</a></sub>
