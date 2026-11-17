@@ -142,7 +142,7 @@
   ],
   "repos_with_language_bytes": 6,
   "contributions": {
-    "total_12mo": 4326,
+    "total_12mo": 4412,
     "weeks": [
       {
         "start": "2025-11-23",
@@ -796,30 +796,31 @@
       },
       {
         "start": "2026-11-08",
-        "count": 348,
+        "count": 362,
         "days": [
           19,
           144,
           65,
           55,
           39,
-          21,
-          5
+          29,
+          11
         ]
       },
       {
         "start": "2026-11-15",
-        "count": 0,
+        "count": 72,
         "days": [
           0,
-          0
+          12,
+          60
         ]
       }
     ]
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 4326,
+    "contributions_12mo": 4412,
     "repos_contributed_12mo": 8,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
@@ -828,5 +829,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-11-16"
+  "last_changed": "2026-11-17"
 }
