@@ -1,8 +1,8 @@
 {
   "login": "hunainx",
   "name": "Hunain Ahmed",
-  "public_repos_total": 7,
-  "eligible_public_repos": 6,
+  "public_repos_total": 8,
+  "eligible_public_repos": 7,
   "stars_earned": 1,
   "repos": [
     {
@@ -36,6 +36,17 @@
       "stars": 0,
       "topics": [],
       "pushed": "2026-10-27",
+      "has_language_bytes": true
+    },
+    {
+      "name": "jet-jam-legal",
+      "url": "https://github.com/hunainx/jet-jam-legal",
+      "homepage": "",
+      "description": "",
+      "language": "HTML",
+      "stars": 0,
+      "topics": [],
+      "pushed": "2026-11-17",
       "has_language_bytes": true
     },
     {
@@ -91,7 +102,7 @@
     "TypeScript": 3942843,
     "Python": 714934,
     "JavaScript": 134668,
-    "HTML": 50563,
+    "HTML": 69344,
     "CSS": 13541,
     "C#": 13465,
     "Shell": 12455,
@@ -117,11 +128,11 @@
   "language_share": [
     {
       "name": "TypeScript",
-      "pct": "80.3"
+      "pct": "80.0"
     },
     {
       "name": "Python",
-      "pct": "14.6"
+      "pct": "14.5"
     },
     {
       "name": "JavaScript",
@@ -129,7 +140,7 @@
     },
     {
       "name": "HTML",
-      "pct": "1.0"
+      "pct": "1.4"
     },
     {
       "name": "CSS",
@@ -140,9 +151,9 @@
       "pct": "1.0"
     }
   ],
-  "repos_with_language_bytes": 6,
+  "repos_with_language_bytes": 7,
   "contributions": {
-    "total_12mo": 4412,
+    "total_12mo": 4456,
     "weeks": [
       {
         "start": "2025-11-23",
@@ -770,12 +781,12 @@
       },
       {
         "start": "2026-10-25",
-        "count": 585,
+        "count": 587,
         "days": [
           64,
           155,
           144,
-          102,
+          104,
           75,
           15,
           30
@@ -809,19 +820,20 @@
       },
       {
         "start": "2026-11-15",
-        "count": 72,
+        "count": 114,
         "days": [
           0,
           12,
-          60
+          65,
+          37
         ]
       }
     ]
   },
   "signal": {
     "mode": "public",
-    "contributions_12mo": 4412,
-    "repos_contributed_12mo": 8,
+    "contributions_12mo": 4456,
+    "repos_contributed_12mo": 9,
     "sources": {
       "contributions_12mo": "public: GraphQL contributionCalendar",
       "repos_contributed_12mo": "public: GraphQL contributionsCollection by repository, public repositories only",
@@ -829,5 +841,5 @@
       "stars_earned": "public: REST stargazers_count, summed over eligible public repos"
     }
   },
-  "last_changed": "2026-11-17"
+  "last_changed": "2026-11-18"
 }
